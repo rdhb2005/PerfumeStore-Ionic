@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Perfumes</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="contenedor">
+
+    <h2>Nuestros perfumes</h2>
+
+    <p class="descripcion">
+      Explora algunas de nuestras fragancias disponibles.
+    </p>
+
+    <ion-card *ngFor="let perfume of perfumes">
+
+      <ion-card-header>
+
+        <ion-card-title>
+          {{ perfume.nombre }}
+        </ion-card-title>
+
+        <ion-card-subtitle>
+          {{ perfume.marca }}
+        </ion-card-subtitle>
+
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <p>
+          <strong>Tipo:</strong>
+          {{ perfume.tipo }}
+        </p>
+
+        <p>
+          <strong>Precio:</strong>
+          ${{ perfume.precio }}
+        </p>
+
+        <p>
+          <strong>Disponibles:</strong>
+          {{ perfume.stock }}
+        </p>
+
+        <ion-button expand="block">
+          Comprar
+        </ion-button>
+
+      </ion-card-content>
+
+    </ion-card>
+
+  </div>
+
+</ion-content>

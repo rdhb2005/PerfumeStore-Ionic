@@ -1,20 +1,29 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>PerfumeStore</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="contenedor">
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <h1>PerfumeStore</h1>
+
+    <p class="subtitulo">
+      Encuentra la fragancia perfecta para cada ocasión.
+    </p>
+
+    <ion-button expand="block" routerLink="/productos">
+      Ver perfumes
+    </ion-button>
+
+    <ion-button expand="block" routerLink="/clientes">
+      Clientes
+    </ion-button>
+
+    <ion-button expand="block" routerLink="/ventas">
+      Ventas
+    </ion-button>
+
   </div>
 </ion-content>

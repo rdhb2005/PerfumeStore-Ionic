@@ -1,0 +1,36 @@
+.contenedor {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 25px 20px;
+}
+
+h2 {
+    text-align: center;
+    color: #6d435a;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.descripcion {
+    text-align: center;
+    color: #777777;
+    margin-bottom: 25px;
+}
+
+ion-card {
+    margin-bottom: 20px;
+    border-radius: 16px;
+}
+
+ion-card-title {
+    color: #6d435a;
+    font-weight: bold;
+}
+
+ion-card-content p {
+    margin: 10px 0;
+}
+
+ion-button {
+    margin-top: 20px;
+}

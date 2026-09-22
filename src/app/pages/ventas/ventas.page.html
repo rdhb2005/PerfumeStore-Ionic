@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Ventas</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="contenedor">
+
+    <h2>Ventas registradas</h2>
+
+    <p class="descripcion">
+      Historial de ventas de PerfumeStore.
+    </p>
+
+    <ion-card *ngFor="let venta of ventas">
+
+      <ion-card-header>
+        <ion-card-title>
+          Venta #{{ venta.id }}
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <p>
+          <strong>Cliente:</strong>
+          {{ venta.cliente }}
+        </p>
+
+        <p>
+          <strong>Perfume:</strong>
+          {{ venta.perfume }}
+        </p>
+
+        <p>
+          <strong>Cantidad:</strong>
+          {{ venta.cantidad }}
+        </p>
+
+        <p class="total">
+          <strong>Total:</strong>
+          ${{ venta.total }}
+        </p>
+
+        <p>
+          <strong>Fecha:</strong>
+          {{ venta.fecha }}
+        </p>
+
+      </ion-card-content>
+
+    </ion-card>
+
+  </div>
+
+</ion-content>
