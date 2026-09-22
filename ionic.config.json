@@ -1,0 +1,7 @@
+{
+  "name": "BuildPOS",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
