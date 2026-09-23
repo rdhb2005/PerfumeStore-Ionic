@@ -1,8 +1,9 @@
 export interface Venta {
     id: number;
-    cliente: string;
-    perfume: string;
+    clienteId: number;
+    perfumeId: number;
     cantidad: number;
+    precioUnitario: number;
     total: number;
     fecha: string;
 }

@@ -14,11 +14,15 @@
 
   <div class="contenedor">
 
-    <h2>Nuestros perfumes</h2>
+    <h2>Catálogo de perfumes</h2>
 
     <p class="descripcion">
-      Explora algunas de nuestras fragancias disponibles.
+      Administración de los perfumes disponibles en la tienda.
     </p>
+
+    <ion-button expand="block" (click)="agregarPerfume()">
+      + Agregar perfume
+    </ion-button>
 
     <ion-card *ngFor="let perfume of perfumes">
 
@@ -37,6 +41,11 @@
       <ion-card-content>
 
         <p>
+          <strong>ID:</strong>
+          {{ perfume.id }}
+        </p>
+
+        <p>
           <strong>Tipo:</strong>
           {{ perfume.tipo }}
         </p>
@@ -47,13 +56,21 @@
         </p>
 
         <p>
-          <strong>Disponibles:</strong>
+          <strong>Stock:</strong>
           {{ perfume.stock }}
         </p>
 
-        <ion-button expand="block">
-          Comprar
-        </ion-button>
+        <div class="acciones">
+
+          <ion-button expand="block" (click)="editarPerfume(perfume)">
+            Editar
+          </ion-button>
+
+          <ion-button expand="block" color="danger" (click)="eliminarPerfume(perfume)">
+            Eliminar
+          </ion-button>
+
+        </div>
 
       </ion-card-content>
 

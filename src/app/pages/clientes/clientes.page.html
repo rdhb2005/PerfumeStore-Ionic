@@ -17,18 +17,29 @@
     <h2>Clientes registrados</h2>
 
     <p class="descripcion">
-      Información de nuestros clientes.
+      Administración de clientes de PerfumeStore.
     </p>
+
+    <ion-button expand="block" (click)="agregarCliente()">
+      + Agregar cliente
+    </ion-button>
 
     <ion-card *ngFor="let cliente of clientes">
 
       <ion-card-header>
+
         <ion-card-title>
           {{ cliente.nombre }}
         </ion-card-title>
+
       </ion-card-header>
 
       <ion-card-content>
+
+        <p>
+          <strong>ID:</strong>
+          {{ cliente.id }}
+        </p>
 
         <p>
           <strong>Teléfono:</strong>
@@ -39,6 +50,18 @@
           <strong>Correo:</strong>
           {{ cliente.correo }}
         </p>
+
+        <div class="acciones">
+
+          <ion-button expand="block" (click)="editarCliente(cliente)">
+            Editar
+          </ion-button>
+
+          <ion-button expand="block" color="danger" (click)="eliminarCliente(cliente)">
+            Eliminar
+          </ion-button>
+
+        </div>
 
       </ion-card-content>
 

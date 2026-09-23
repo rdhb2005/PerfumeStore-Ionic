@@ -10,11 +10,13 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
+  IonButton,
   IonButtons,
   IonBackButton
 } from '@ionic/angular';
 
 import { Cliente } from '../../models/cliente.model';
+import { ClienteService } from '../../services/cliente.service';
 
 @Component({
   selector: 'app-clientes',
@@ -31,31 +33,107 @@ import { Cliente } from '../../models/cliente.model';
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
+    IonButton,
     IonButtons,
     IonBackButton
   ]
 })
 export class ClientesPage {
 
-  clientes: Cliente[] = [
-    {
-      id: 1,
-      nombre: 'Daniel Hernández',
-      telefono: '618 123 4567',
-      correo: 'daniel@email.com'
-    },
-    {
-      id: 2,
-      nombre: 'María González',
-      telefono: '618 987 6543',
-      correo: 'maria@email.com'
-    },
-    {
-      id: 3,
-      nombre: 'Carlos Rivera',
-      telefono: '618 555 4321',
-      correo: 'carlos@email.com'
-    }
-  ];
+  clientes: Cliente[] = [];
 
+  constructor(
+    private clienteService: ClienteService
+  ) {
+    this.cargarClientes();
+  }
+
+  cargarClientes(): void {
+    this.clientes = this.clienteService.listar();
+  }
+
+  agregarCliente(): void {
+
+    const nombre = prompt('Nombre del cliente:');
+
+    if (!nombre || !nombre.trim()) {
+      return;
+    }
+
+    const telefono = prompt('Teléfono:');
+
+    if (!telefono || !telefono.trim()) {
+      return;
+    }
+
+    const correo = prompt('Correo electrónico:');
+
+    if (!correo || !correo.trim()) {
+      return;
+    }
+
+    this.clienteService.crear({
+      nombre: nombre.trim(),
+      telefono: telefono.trim(),
+      correo: correo.trim()
+    });
+
+    this.cargarClientes();
+  }
+
+  editarCliente(cliente: Cliente): void {
+
+    const nombre = prompt(
+      'Nombre:',
+      cliente.nombre
+    );
+
+    if (nombre === null || !nombre.trim()) {
+      return;
+    }
+
+    const telefono = prompt(
+      'Teléfono:',
+      cliente.telefono
+    );
+
+    if (telefono === null || !telefono.trim()) {
+      return;
+    }
+
+    const correo = prompt(
+      'Correo:',
+      cliente.correo
+    );
+
+    if (correo === null || !correo.trim()) {
+      return;
+    }
+
+    this.clienteService.actualizar(
+      cliente.id,
+      {
+        nombre: nombre.trim(),
+        telefono: telefono.trim(),
+        correo: correo.trim()
+      }
+    );
+
+    this.cargarClientes();
+  }
+
+  eliminarCliente(cliente: Cliente): void {
+
+    const confirmar = confirm(
+      `¿Eliminar al cliente ${cliente.nombre}?`
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    this.clienteService.eliminar(cliente.id);
+
+    this.cargarClientes();
+  }
 }

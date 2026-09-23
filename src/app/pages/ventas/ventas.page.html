@@ -17,32 +17,43 @@
     <h2>Ventas registradas</h2>
 
     <p class="descripcion">
-      Historial de ventas de PerfumeStore.
+      Administración e historial de ventas de PerfumeStore.
     </p>
+
+    <ion-button expand="block" (click)="agregarVenta()">
+      + Registrar venta
+    </ion-button>
 
     <ion-card *ngFor="let venta of ventas">
 
       <ion-card-header>
+
         <ion-card-title>
           Venta #{{ venta.id }}
         </ion-card-title>
+
       </ion-card-header>
 
       <ion-card-content>
 
         <p>
           <strong>Cliente:</strong>
-          {{ venta.cliente }}
+          {{ obtenerCliente(venta.clienteId) }}
         </p>
 
         <p>
           <strong>Perfume:</strong>
-          {{ venta.perfume }}
+          {{ obtenerPerfume(venta.perfumeId) }}
         </p>
 
         <p>
           <strong>Cantidad:</strong>
           {{ venta.cantidad }}
+        </p>
+
+        <p>
+          <strong>Precio unitario:</strong>
+          ${{ venta.precioUnitario }}
         </p>
 
         <p class="total">
@@ -54,6 +65,18 @@
           <strong>Fecha:</strong>
           {{ venta.fecha }}
         </p>
+
+        <div class="acciones">
+
+          <ion-button expand="block" (click)="editarVenta(venta)">
+            Editar
+          </ion-button>
+
+          <ion-button expand="block" color="danger" (click)="eliminarVenta(venta)">
+            Eliminar
+          </ion-button>
+
+        </div>
 
       </ion-card-content>
 
