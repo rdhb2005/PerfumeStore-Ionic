@@ -1,141 +1,29 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Perfume } from '../models/perfume.model';
+import { ApiService } from './api.service';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class PerfumeService {
+  private readonly api = inject(ApiService);
+  private readonly archivo = 'perfumes.php';
 
-    private readonly clave = 'perfumes';
+  listar(): Promise<Perfume[]> {
+    return this.api.get<Perfume[]>(this.archivo);
+  }
 
-    constructor() {
-        this.inicializarDatos();
-    }
+  obtener(id: number): Promise<Perfume> {
+    return this.api.get<Perfume>(this.archivo, { id });
+  }
 
-    private inicializarDatos(): void {
+  crear(datos: Omit<Perfume, 'id'>): Promise<Perfume> {
+    return this.api.post<Perfume>(this.archivo, datos);
+  }
 
-        const datos = localStorage.getItem(this.clave);
+  actualizar(id: number, datos: Partial<Omit<Perfume, 'id'>>): Promise<Perfume> {
+    return this.api.patch<Perfume>(this.archivo, datos, { id });
+  }
 
-        if (!datos) {
-
-            const perfumesIniciales: Perfume[] = [
-                {
-                    id: 1,
-                    nombre: 'Sauvage',
-                    marca: 'Dior',
-                    tipo: 'Eau de Parfum',
-                    precio: 2850,
-                    stock: 8
-                },
-                {
-                    id: 2,
-                    nombre: 'Eros',
-                    marca: 'Versace',
-                    tipo: 'Eau de Toilette',
-                    precio: 2100,
-                    stock: 12
-                },
-                {
-                    id: 3,
-                    nombre: 'Bleu de Chanel',
-                    marca: 'Chanel',
-                    tipo: 'Eau de Parfum',
-                    precio: 3200,
-                    stock: 6
-                }
-            ];
-
-            this.guardar(perfumesIniciales);
-        }
-    }
-
-    listar(): Perfume[] {
-
-        const datos = localStorage.getItem(this.clave);
-
-        if (!datos) {
-            return [];
-        }
-
-        return JSON.parse(datos);
-    }
-
-    obtener(id: number): Perfume | undefined {
-
-        return this.listar().find(
-            perfume => perfume.id === id
-        );
-    }
-
-    crear(datos: Omit<Perfume, 'id'>): Perfume {
-
-        const perfumes = this.listar();
-
-        const nuevoId =
-            perfumes.length > 0
-                ? Math.max(...perfumes.map(p => p.id)) + 1
-                : 1;
-
-        const nuevoPerfume: Perfume = {
-            id: nuevoId,
-            ...datos
-        };
-
-        perfumes.push(nuevoPerfume);
-
-        this.guardar(perfumes);
-
-        return nuevoPerfume;
-    }
-
-    actualizar(
-        id: number,
-        datos: Partial<Perfume>
-    ): boolean {
-
-        const perfumes = this.listar();
-
-        const indice = perfumes.findIndex(
-            perfume => perfume.id === id
-        );
-
-        if (indice === -1) {
-            return false;
-        }
-
-        perfumes[indice] = {
-            ...perfumes[indice],
-            ...datos,
-            id
-        };
-
-        this.guardar(perfumes);
-
-        return true;
-    }
-
-    eliminar(id: number): boolean {
-
-        const perfumes = this.listar();
-
-        const nuevosPerfumes = perfumes.filter(
-            perfume => perfume.id !== id
-        );
-
-        if (nuevosPerfumes.length === perfumes.length) {
-            return false;
-        }
-
-        this.guardar(nuevosPerfumes);
-
-        return true;
-    }
-
-    private guardar(perfumes: Perfume[]): void {
-
-        localStorage.setItem(
-            this.clave,
-            JSON.stringify(perfumes)
-        );
-    }
+  eliminar(id: number): Promise<null> {
+    return this.api.delete(this.archivo, { id });
+  }
 }

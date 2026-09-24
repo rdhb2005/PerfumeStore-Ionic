@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -13,7 +12,7 @@ import {
   IonCardContent,
   IonButton,
   IonButtons,
-  IonBackButton
+  IonBackButton,
 } from '@ionic/angular';
 
 import { Perfume } from '../../models/perfume.model';
@@ -37,168 +36,121 @@ import { PerfumeService } from '../../services/perfume.service';
     IonCardContent,
     IonButton,
     IonButtons,
-    IonBackButton
-  ]
+    IonBackButton,
+  ],
 })
-export class ProductosPage {
-
+export class ProductosPage implements OnInit {
   perfumes: Perfume[] = [];
 
   constructor(
-    private perfumeService: PerfumeService
-  ) {
-    this.cargarPerfumes();
+    private readonly perfumeService: PerfumeService,
+    private readonly cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    void this.cargarPerfumes();
   }
 
-  cargarPerfumes(): void {
-    this.perfumes = this.perfumeService.listar();
-  }
-
-  agregarPerfume(): void {
-
-    const nombre = prompt('Nombre del perfume:');
-
-    if (!nombre || !nombre.trim()) {
-      return;
+  async cargarPerfumes(): Promise<void> {
+    try {
+      this.perfumes = await this.perfumeService.listar();
+      this.cdr.markForCheck();
+    } catch (error) {
+      alert(this.mensajeError(error));
     }
+  }
+
+  async agregarPerfume(): Promise<void> {
+    const nombre = prompt('Nombre del perfume:');
+    if (!nombre?.trim()) return;
 
     const marca = prompt('Marca del perfume:');
+    if (!marca?.trim()) return;
 
-    if (!marca || !marca.trim()) {
-      return;
-    }
-
-    const tipo = prompt(
-      'Tipo de perfume:',
-      'Eau de Parfum'
-    );
-
-    if (!tipo || !tipo.trim()) {
-      return;
-    }
+    const tipo = prompt('Tipo de perfume:', 'Eau de Parfum');
+    if (!tipo?.trim()) return;
 
     const precioTexto = prompt('Precio:');
-
-    if (precioTexto === null) {
-      return;
-    }
+    if (precioTexto === null) return;
 
     const stockTexto = prompt('Stock disponible:');
-
-    if (stockTexto === null) {
-      return;
-    }
+    if (stockTexto === null) return;
 
     const precio = Number(precioTexto);
     const stock = Number(stockTexto);
 
-    if (
-      Number.isNaN(precio) ||
-      Number.isNaN(stock) ||
-      precio < 0 ||
-      stock < 0
-    ) {
+    if (Number.isNaN(precio) || Number.isNaN(stock) || precio < 0 || !Number.isInteger(stock) || stock < 0) {
       alert('El precio y el stock deben ser valores válidos.');
       return;
     }
 
-    this.perfumeService.crear({
-      nombre: nombre.trim(),
-      marca: marca.trim(),
-      tipo: tipo.trim(),
-      precio,
-      stock
-    });
-
-    this.cargarPerfumes();
-  }
-
-  editarPerfume(perfume: Perfume): void {
-
-    const nombre = prompt(
-      'Nombre:',
-      perfume.nombre
-    );
-
-    if (nombre === null || !nombre.trim()) {
-      return;
-    }
-
-    const marca = prompt(
-      'Marca:',
-      perfume.marca
-    );
-
-    if (marca === null || !marca.trim()) {
-      return;
-    }
-
-    const tipo = prompt(
-      'Tipo:',
-      perfume.tipo
-    );
-
-    if (tipo === null || !tipo.trim()) {
-      return;
-    }
-
-    const precioTexto = prompt(
-      'Precio:',
-      perfume.precio.toString()
-    );
-
-    if (precioTexto === null) {
-      return;
-    }
-
-    const stockTexto = prompt(
-      'Stock:',
-      perfume.stock.toString()
-    );
-
-    if (stockTexto === null) {
-      return;
-    }
-
-    const precio = Number(precioTexto);
-    const stock = Number(stockTexto);
-
-    if (
-      Number.isNaN(precio) ||
-      Number.isNaN(stock) ||
-      precio < 0 ||
-      stock < 0
-    ) {
-      alert('El precio y el stock deben ser valores válidos.');
-      return;
-    }
-
-    this.perfumeService.actualizar(
-      perfume.id,
-      {
+    try {
+      await this.perfumeService.crear({
         nombre: nombre.trim(),
         marca: marca.trim(),
         tipo: tipo.trim(),
         precio,
-        stock
-      }
-    );
-
-    this.cargarPerfumes();
+        stock,
+      });
+      await this.cargarPerfumes();
+      alert('Perfume registrado en MySQL.');
+    } catch (error) {
+      alert(this.mensajeError(error));
+    }
   }
 
-  eliminarPerfume(perfume: Perfume): void {
+  async editarPerfume(perfume: Perfume): Promise<void> {
+    const nombre = prompt('Nombre:', perfume.nombre);
+    if (!nombre?.trim()) return;
 
-    const confirmar = confirm(
-      `¿Eliminar ${perfume.nombre} de ${perfume.marca}?`
-    );
+    const marca = prompt('Marca:', perfume.marca);
+    if (!marca?.trim()) return;
 
-    if (!confirmar) {
+    const tipo = prompt('Tipo:', perfume.tipo);
+    if (!tipo?.trim()) return;
+
+    const precioTexto = prompt('Precio:', perfume.precio.toString());
+    if (precioTexto === null) return;
+
+    const stockTexto = prompt('Stock:', perfume.stock.toString());
+    if (stockTexto === null) return;
+
+    const precio = Number(precioTexto);
+    const stock = Number(stockTexto);
+
+    if (Number.isNaN(precio) || Number.isNaN(stock) || precio < 0 || !Number.isInteger(stock) || stock < 0) {
+      alert('El precio y el stock deben ser valores válidos.');
       return;
     }
 
-    this.perfumeService.eliminar(perfume.id);
+    try {
+      await this.perfumeService.actualizar(perfume.id, {
+        nombre: nombre.trim(),
+        marca: marca.trim(),
+        tipo: tipo.trim(),
+        precio,
+        stock,
+      });
+      await this.cargarPerfumes();
+      alert('Perfume actualizado.');
+    } catch (error) {
+      alert(this.mensajeError(error));
+    }
+  }
 
-    this.cargarPerfumes();
+  async eliminarPerfume(perfume: Perfume): Promise<void> {
+    if (!confirm(`¿Eliminar ${perfume.nombre} de ${perfume.marca}?`)) return;
+
+    try {
+      await this.perfumeService.eliminar(perfume.id);
+      await this.cargarPerfumes();
+      alert('Perfume eliminado.');
+    } catch (error) {
+      alert(this.mensajeError(error));
+    }
+  }
+
+  private mensajeError(error: unknown): string {
+    return error instanceof Error ? error.message : 'Ocurrió un error inesperado.';
   }
 }

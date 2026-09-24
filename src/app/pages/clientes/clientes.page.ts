@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -12,7 +11,7 @@ import {
   IonCardContent,
   IonButton,
   IonButtons,
-  IonBackButton
+  IonBackButton,
 } from '@ionic/angular';
 
 import { Cliente } from '../../models/cliente.model';
@@ -35,105 +34,89 @@ import { ClienteService } from '../../services/cliente.service';
     IonCardContent,
     IonButton,
     IonButtons,
-    IonBackButton
-  ]
+    IonBackButton,
+  ],
 })
-export class ClientesPage {
-
+export class ClientesPage implements OnInit {
   clientes: Cliente[] = [];
 
   constructor(
-    private clienteService: ClienteService
-  ) {
-    this.cargarClientes();
+    private readonly clienteService: ClienteService,
+    private readonly cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    void this.cargarClientes();
   }
 
-  cargarClientes(): void {
-    this.clientes = this.clienteService.listar();
-  }
-
-  agregarCliente(): void {
-
-    const nombre = prompt('Nombre del cliente:');
-
-    if (!nombre || !nombre.trim()) {
-      return;
+  async cargarClientes(): Promise<void> {
+    try {
+      this.clientes = await this.clienteService.listar();
+      this.cdr.markForCheck();
+    } catch (error) {
+      alert(this.mensajeError(error));
     }
+  }
+
+  async agregarCliente(): Promise<void> {
+    const nombre = prompt('Nombre del cliente:');
+    if (!nombre?.trim()) return;
 
     const telefono = prompt('Teléfono:');
-
-    if (!telefono || !telefono.trim()) {
-      return;
-    }
+    if (!telefono?.trim()) return;
 
     const correo = prompt('Correo electrónico:');
+    if (!correo?.trim()) return;
 
-    if (!correo || !correo.trim()) {
-      return;
-    }
-
-    this.clienteService.crear({
-      nombre: nombre.trim(),
-      telefono: telefono.trim(),
-      correo: correo.trim()
-    });
-
-    this.cargarClientes();
-  }
-
-  editarCliente(cliente: Cliente): void {
-
-    const nombre = prompt(
-      'Nombre:',
-      cliente.nombre
-    );
-
-    if (nombre === null || !nombre.trim()) {
-      return;
-    }
-
-    const telefono = prompt(
-      'Teléfono:',
-      cliente.telefono
-    );
-
-    if (telefono === null || !telefono.trim()) {
-      return;
-    }
-
-    const correo = prompt(
-      'Correo:',
-      cliente.correo
-    );
-
-    if (correo === null || !correo.trim()) {
-      return;
-    }
-
-    this.clienteService.actualizar(
-      cliente.id,
-      {
+    try {
+      await this.clienteService.crear({
         nombre: nombre.trim(),
         telefono: telefono.trim(),
-        correo: correo.trim()
-      }
-    );
-
-    this.cargarClientes();
+        correo: correo.trim(),
+      });
+      await this.cargarClientes();
+      alert('Cliente registrado en MySQL.');
+    } catch (error) {
+      alert(this.mensajeError(error));
+    }
   }
 
-  eliminarCliente(cliente: Cliente): void {
+  async editarCliente(cliente: Cliente): Promise<void> {
+    const nombre = prompt('Nombre:', cliente.nombre);
+    if (!nombre?.trim()) return;
 
-    const confirmar = confirm(
-      `¿Eliminar al cliente ${cliente.nombre}?`
-    );
+    const telefono = prompt('Teléfono:', cliente.telefono);
+    if (!telefono?.trim()) return;
 
-    if (!confirmar) {
-      return;
+    const correo = prompt('Correo:', cliente.correo);
+    if (!correo?.trim()) return;
+
+    try {
+      await this.clienteService.actualizar(cliente.id, {
+        nombre: nombre.trim(),
+        telefono: telefono.trim(),
+        correo: correo.trim(),
+      });
+      await this.cargarClientes();
+      alert('Cliente actualizado.');
+    } catch (error) {
+      alert(this.mensajeError(error));
     }
+  }
 
-    this.clienteService.eliminar(cliente.id);
+  async eliminarCliente(cliente: Cliente): Promise<void> {
+    if (!confirm(`¿Eliminar al cliente ${cliente.nombre}?`)) return;
 
-    this.cargarClientes();
+    try {
+      await this.clienteService.eliminar(cliente.id);
+      await this.cargarClientes();
+      alert('Cliente eliminado.');
+    } catch (error) {
+      alert(this.mensajeError(error));
+    }
+  }
+
+  private mensajeError(error: unknown): string {
+    return error instanceof Error ? error.message : 'Ocurrió un error inesperado.';
   }
 }

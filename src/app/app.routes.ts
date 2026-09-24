@@ -12,14 +12,18 @@ export const routes: Routes = [
   },
   {
     path: 'productos',
-    loadComponent: () => import('./pages/productos/productos.page').then( m => m.ProductosPage)
+    loadComponent: () => import('./pages/productos/productos.page').then((m) => m.ProductosPage),
   },
   {
     path: 'clientes',
-    loadComponent: () => import('./pages/clientes/clientes.page').then( m => m.ClientesPage)
+    loadComponent: () => import('./pages/clientes/clientes.page').then((m) => m.ClientesPage),
   },
   {
     path: 'ventas',
-    loadComponent: () => import('./pages/ventas/ventas.page').then( m => m.VentasPage)
+    loadComponent: () => import('./pages/ventas/ventas.page').then((m) => m.VentasPage),
+  },
+  {
+    path: 'borradores',
+    loadComponent: () => import('./pages/borradores/borradores.page').then((m) => m.BorradoresPage),
   },
 ];

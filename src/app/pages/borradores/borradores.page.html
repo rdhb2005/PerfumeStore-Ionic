@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Borradores locales</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="contenedor">
+    <h2>Persistencia local</h2>
+
+    <p class="descripcion">
+      Estos borradores se guardan con Capacitor Preferences y permanecen en el dispositivo aunque cierres y vuelvas a abrir la aplicación.
+    </p>
+
+    <ion-button expand="block" (click)="agregarBorrador()">
+      + Guardar borrador de venta
+    </ion-button>
+
+    <ion-card *ngFor="let borrador of borradores">
+      <ion-card-header>
+        <ion-card-title>
+          {{ obtenerCliente(borrador.clienteId) }}
+        </ion-card-title>
+        <ion-card-subtitle>
+          Guardado localmente
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p><strong>Perfume:</strong> {{ obtenerPerfume(borrador.perfumeId) }}</p>
+        <p><strong>Cantidad:</strong> {{ borrador.cantidad }}</p>
+        <p><strong>Total estimado:</strong> ${{ totalEstimado(borrador) }}</p>
+        <p><strong>Fecha:</strong> {{ borrador.fecha }}</p>
+        <p *ngIf="borrador.notas"><strong>Notas:</strong> {{ borrador.notas }}</p>
+
+        <div class="acciones">
+          <ion-button expand="block" (click)="editarBorrador(borrador)">
+            Editar borrador
+          </ion-button>
+
+          <ion-button expand="block" color="success" (click)="registrarVenta(borrador)">
+            Registrar como venta
+          </ion-button>
+
+          <ion-button expand="block" color="danger" (click)="eliminarBorrador(borrador)">
+            Eliminar borrador
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <p class="vacio" *ngIf="borradores.length === 0">
+      No hay borradores guardados en este dispositivo.
+    </p>
+  </div>
+</ion-content>

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -12,13 +11,12 @@ import {
   IonCardContent,
   IonButton,
   IonButtons,
-  IonBackButton
+  IonBackButton,
 } from '@ionic/angular';
 
 import { Venta } from '../../models/venta.model';
 import { Cliente } from '../../models/cliente.model';
 import { Perfume } from '../../models/perfume.model';
-
 import { VentaService } from '../../services/venta.service';
 import { ClienteService } from '../../services/cliente.service';
 import { PerfumeService } from '../../services/perfume.service';
@@ -40,329 +38,175 @@ import { PerfumeService } from '../../services/perfume.service';
     IonCardContent,
     IonButton,
     IonButtons,
-    IonBackButton
-  ]
+    IonBackButton,
+  ],
 })
-export class VentasPage {
-
+export class VentasPage implements OnInit {
   ventas: Venta[] = [];
   clientes: Cliente[] = [];
   perfumes: Perfume[] = [];
 
   constructor(
-    private ventaService: VentaService,
-    private clienteService: ClienteService,
-    private perfumeService: PerfumeService
-  ) {
-    this.cargarDatos();
+    private readonly ventaService: VentaService,
+    private readonly clienteService: ClienteService,
+    private readonly perfumeService: PerfumeService,
+    private readonly cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    void this.cargarDatos();
   }
 
-  cargarDatos(): void {
-    this.ventas = this.ventaService.listar();
-    this.clientes = this.clienteService.listar();
-    this.perfumes = this.perfumeService.listar();
+  async cargarDatos(): Promise<void> {
+    try {
+      const [ventas, clientes, perfumes] = await Promise.all([
+        this.ventaService.listar(),
+        this.clienteService.listar(),
+        this.perfumeService.listar(),
+      ]);
+      this.ventas = ventas;
+      this.clientes = clientes;
+      this.perfumes = perfumes;
+      this.cdr.markForCheck();
+    } catch (error) {
+      alert(this.mensajeError(error));
+    }
   }
 
   obtenerCliente(clienteId: number): string {
-
-    const cliente = this.clientes.find(
-      c => c.id === clienteId
-    );
-
-    return cliente
-      ? cliente.nombre
-      : 'Cliente no encontrado';
+    return this.clientes.find((cliente) => cliente.id === clienteId)?.nombre ?? 'Cliente no encontrado';
   }
 
   obtenerPerfume(perfumeId: number): string {
-
-    const perfume = this.perfumes.find(
-      p => p.id === perfumeId
-    );
-
-    return perfume
-      ? `${perfume.nombre} - ${perfume.marca}`
-      : 'Perfume no encontrado';
+    const perfume = this.perfumes.find((item) => item.id === perfumeId);
+    return perfume ? `${perfume.nombre} - ${perfume.marca}` : 'Perfume no encontrado';
   }
 
-  agregarVenta(): void {
-
+  async agregarVenta(): Promise<void> {
     if (this.clientes.length === 0) {
       alert('Primero debes registrar un cliente.');
       return;
     }
 
-    const perfumesDisponibles =
-      this.perfumes.filter(p => p.stock > 0);
-
+    const perfumesDisponibles = this.perfumes.filter((perfume) => perfume.stock > 0);
     if (perfumesDisponibles.length === 0) {
       alert('No hay perfumes disponibles en stock.');
       return;
     }
 
-    const listaClientes = this.clientes
-      .map(c => `${c.id} - ${c.nombre}`)
-      .join('\n');
-
-    const clienteTexto = prompt(
-      `Escribe el ID del cliente:\n\n${listaClientes}`
-    );
-
-    if (clienteTexto === null) {
-      return;
-    }
+    const listaClientes = this.clientes.map((cliente) => `${cliente.id} - ${cliente.nombre}`).join('\n');
+    const clienteTexto = prompt(`Escribe el ID del cliente:\n\n${listaClientes}`);
+    if (clienteTexto === null) return;
 
     const clienteId = Number(clienteTexto);
-
-    const cliente = this.clientes.find(
-      c => c.id === clienteId
-    );
-
-    if (!cliente) {
+    if (!this.clientes.some((cliente) => cliente.id === clienteId)) {
       alert('Cliente no válido.');
       return;
     }
 
     const listaPerfumes = perfumesDisponibles
-      .map(
-        p =>
-          `${p.id} - ${p.nombre} - ${p.marca} - $${p.precio} - Stock: ${p.stock}`
-      )
+      .map((perfume) => `${perfume.id} - ${perfume.nombre} - ${perfume.marca} - $${perfume.precio} - Stock: ${perfume.stock}`)
       .join('\n');
-
-    const perfumeTexto = prompt(
-      `Escribe el ID del perfume:\n\n${listaPerfumes}`
-    );
-
-    if (perfumeTexto === null) {
-      return;
-    }
+    const perfumeTexto = prompt(`Escribe el ID del perfume:\n\n${listaPerfumes}`);
+    if (perfumeTexto === null) return;
 
     const perfumeId = Number(perfumeTexto);
-
-    const perfume = perfumesDisponibles.find(
-      p => p.id === perfumeId
-    );
-
+    const perfume = perfumesDisponibles.find((item) => item.id === perfumeId);
     if (!perfume) {
       alert('Perfume no válido.');
       return;
     }
 
-    const cantidadTexto = prompt(
-      `Cantidad a vender. Disponibles: ${perfume.stock}`,
-      '1'
-    );
-
-    if (cantidadTexto === null) {
-      return;
-    }
+    const cantidadTexto = prompt(`Cantidad a vender. Disponibles: ${perfume.stock}`, '1');
+    if (cantidadTexto === null) return;
 
     const cantidad = Number(cantidadTexto);
-
-    if (
-      !Number.isInteger(cantidad) ||
-      cantidad <= 0 ||
-      cantidad > perfume.stock
-    ) {
+    if (!Number.isInteger(cantidad) || cantidad <= 0 || cantidad > perfume.stock) {
       alert('La cantidad no es válida.');
       return;
     }
 
-    const fechaActual =
-      new Date().toLocaleDateString('es-MX');
+    const fecha = prompt('Fecha de la venta:', this.fechaHoy());
+    if (!fecha?.trim()) return;
 
-    const fecha = prompt(
-      'Fecha de la venta:',
-      fechaActual
-    );
-
-    if (!fecha || !fecha.trim()) {
-      return;
+    try {
+      await this.ventaService.crear({ clienteId, perfumeId, cantidad, fecha: fecha.trim() });
+      await this.cargarDatos();
+      alert('Venta registrada en MySQL y stock actualizado.');
+    } catch (error) {
+      alert(this.mensajeError(error));
     }
-
-    this.ventaService.crear({
-      clienteId,
-      perfumeId,
-      cantidad,
-      precioUnitario: perfume.precio,
-      fecha: fecha.trim()
-    });
-
-    this.perfumeService.actualizar(
-      perfume.id,
-      {
-        stock: perfume.stock - cantidad
-      }
-    );
-
-    this.cargarDatos();
-
-    alert('Venta registrada correctamente.');
   }
 
-  editarVenta(venta: Venta): void {
-
-    const perfumeAnterior =
-      this.perfumeService.obtener(venta.perfumeId);
-
-    const listaClientes = this.clientes
-      .map(c => `${c.id} - ${c.nombre}`)
-      .join('\n');
-
-    const clienteTexto = prompt(
-      `ID del cliente:\n\n${listaClientes}`,
-      venta.clienteId.toString()
-    );
-
-    if (clienteTexto === null) {
-      return;
-    }
+  async editarVenta(venta: Venta): Promise<void> {
+    const listaClientes = this.clientes.map((cliente) => `${cliente.id} - ${cliente.nombre}`).join('\n');
+    const clienteTexto = prompt(`ID del cliente:\n\n${listaClientes}`, venta.clienteId.toString());
+    if (clienteTexto === null) return;
 
     const clienteId = Number(clienteTexto);
-
-    const cliente = this.clientes.find(
-      c => c.id === clienteId
-    );
-
-    if (!cliente) {
+    if (!this.clientes.some((cliente) => cliente.id === clienteId)) {
       alert('Cliente no válido.');
       return;
     }
 
     const listaPerfumes = this.perfumes
-      .map(
-        p =>
-          `${p.id} - ${p.nombre} - ${p.marca} - $${p.precio} - Stock: ${p.stock}`
-      )
+      .map((perfume) => `${perfume.id} - ${perfume.nombre} - ${perfume.marca} - $${perfume.precio} - Stock: ${perfume.stock}`)
       .join('\n');
-
-    const perfumeTexto = prompt(
-      `ID del perfume:\n\n${listaPerfumes}`,
-      venta.perfumeId.toString()
-    );
-
-    if (perfumeTexto === null) {
-      return;
-    }
+    const perfumeTexto = prompt(`ID del perfume:\n\n${listaPerfumes}`, venta.perfumeId.toString());
+    if (perfumeTexto === null) return;
 
     const perfumeId = Number(perfumeTexto);
-
-    const perfumeNuevo = this.perfumes.find(
-      p => p.id === perfumeId
-    );
-
-    if (!perfumeNuevo) {
+    if (!this.perfumes.some((perfume) => perfume.id === perfumeId)) {
       alert('Perfume no válido.');
       return;
     }
 
-    let stockDisponible = perfumeNuevo.stock;
-
-    if (perfumeAnterior?.id === perfumeNuevo.id) {
-      stockDisponible += venta.cantidad;
-    }
-
-    const cantidadTexto = prompt(
-      `Cantidad. Disponibles: ${stockDisponible}`,
-      venta.cantidad.toString()
-    );
-
-    if (cantidadTexto === null) {
-      return;
-    }
+    const cantidadTexto = prompt('Cantidad:', venta.cantidad.toString());
+    if (cantidadTexto === null) return;
 
     const cantidad = Number(cantidadTexto);
-
-    if (
-      !Number.isInteger(cantidad) ||
-      cantidad <= 0 ||
-      cantidad > stockDisponible
-    ) {
+    if (!Number.isInteger(cantidad) || cantidad <= 0) {
       alert('La cantidad no es válida.');
       return;
     }
 
-    const fecha = prompt(
-      'Fecha:',
-      venta.fecha
-    );
+    const fecha = prompt('Fecha:', venta.fecha);
+    if (!fecha?.trim()) return;
 
-    if (!fecha || !fecha.trim()) {
-      return;
-    }
-
-    if (perfumeAnterior) {
-      this.perfumeService.actualizar(
-        perfumeAnterior.id,
-        {
-          stock:
-            perfumeAnterior.stock +
-            venta.cantidad
-        }
-      );
-    }
-
-    const perfumeActualizado =
-      this.perfumeService.obtener(perfumeNuevo.id);
-
-    if (!perfumeActualizado) {
-      return;
-    }
-
-    this.perfumeService.actualizar(
-      perfumeActualizado.id,
-      {
-        stock:
-          perfumeActualizado.stock -
-          cantidad
-      }
-    );
-
-    this.ventaService.actualizar(
-      venta.id,
-      {
+    try {
+      await this.ventaService.actualizar(venta.id, {
         clienteId,
         perfumeId,
         cantidad,
-        precioUnitario: perfumeNuevo.precio,
-        fecha: fecha.trim()
-      }
-    );
-
-    this.cargarDatos();
-
-    alert('Venta actualizada correctamente.');
+        fecha: fecha.trim(),
+      });
+      await this.cargarDatos();
+      alert('Venta actualizada. El servidor recalculó el total y el stock.');
+    } catch (error) {
+      alert(this.mensajeError(error));
+    }
   }
 
-  eliminarVenta(venta: Venta): void {
+  async eliminarVenta(venta: Venta): Promise<void> {
+    if (!confirm(`¿Eliminar la venta #${venta.id}?`)) return;
 
-    const confirmar = confirm(
-      `¿Eliminar la venta #${venta.id}?`
-    );
-
-    if (!confirmar) {
-      return;
+    try {
+      await this.ventaService.eliminar(venta.id);
+      await this.cargarDatos();
+      alert('Venta eliminada y stock restaurado.');
+    } catch (error) {
+      alert(this.mensajeError(error));
     }
+  }
 
-    const perfume =
-      this.perfumeService.obtener(venta.perfumeId);
+  private fechaHoy(): string {
+    const fecha = new Date();
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    return `${dia}/${mes}/${fecha.getFullYear()}`;
+  }
 
-    if (perfume) {
-      this.perfumeService.actualizar(
-        perfume.id,
-        {
-          stock:
-            perfume.stock +
-            venta.cantidad
-        }
-      );
-    }
-
-    this.ventaService.eliminar(venta.id);
-
-    this.cargarDatos();
-
-    alert('Venta eliminada.');
+  private mensajeError(error: unknown): string {
+    return error instanceof Error ? error.message : 'Ocurrió un error inesperado.';
   }
 }

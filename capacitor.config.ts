@@ -1,9 +1,9 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'BuildPOS',
-  webDir: 'www'
+  appId: 'com.perfumestore.app',
+  appName: 'PerfumeStore',
+  webDir: 'www',
 };
 
 export default config;
