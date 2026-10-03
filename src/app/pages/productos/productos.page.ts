@@ -51,6 +51,7 @@ export class ProductosPage implements OnInit {
     void this.cargarPerfumes();
   }
 
+  // Este método carga los perfumes registrados.
   async cargarPerfumes(): Promise<void> {
     try {
       this.perfumes = await this.perfumeService.listar();
@@ -60,6 +61,7 @@ export class ProductosPage implements OnInit {
     }
   }
 
+  // Este método solicita los datos y registra un perfume.
   async agregarPerfume(): Promise<void> {
     const nombre = prompt('Nombre del perfume:');
     if (!nombre?.trim()) return;
@@ -99,6 +101,7 @@ export class ProductosPage implements OnInit {
     }
   }
 
+  // Este método permite modificar un perfume.
   async editarPerfume(perfume: Perfume): Promise<void> {
     const nombre = prompt('Nombre:', perfume.nombre);
     if (!nombre?.trim()) return;
@@ -138,6 +141,7 @@ export class ProductosPage implements OnInit {
     }
   }
 
+  // Este método elimina el perfume seleccionado.
   async eliminarPerfume(perfume: Perfume): Promise<void> {
     if (!confirm(`¿Eliminar ${perfume.nombre} de ${perfume.marca}?`)) return;
 

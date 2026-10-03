@@ -5,27 +5,52 @@
 </ion-header>
 
 <ion-content>
-  <div class="contenedor">
-    <h1>PerfumeStore</h1>
+  <main class="home-shell">
+    <section class="hero-editorial">
+      <div class="hero-copy">
+        <p class="eyebrow">CATÁLOGO / CLIENTES / VENTAS</p>
+        <h1>PERFUME<br />STORE</h1>
+        <p class="subtitulo">Una interfaz simple para administrar fragancias, clientes y ventas.</p>
 
-    <p class="subtitulo">
-      Encuentra la fragancia perfecta para cada ocasión.
-    </p>
+        @if (servidor) {
+          <div class="conexion-activa">
+            <span class="punto" [class.sin-conexion]="estadoTipo !== 'conectado'"></span>
+            <span>API {{ servidor }} · {{ estadoTexto }}</span>
+          </div>
+        }
+      </div>
 
-    <ion-button expand="block" routerLink="/productos">
-      Ver perfumes
-    </ion-button>
+      <div class="hero-object" aria-hidden="true">
+        <span class="hero-cap"></span>
+        <div class="hero-label">
+          <strong>PS</strong>
+          <span>EAU DE PARFUM</span>
+          <small>50 ML</small>
+        </div>
+      </div>
+    </section>
 
-    <ion-button expand="block" routerLink="/clientes">
-      Clientes
-    </ion-button>
-
-    <ion-button expand="block" routerLink="/ventas">
-      Ventas
-    </ion-button>
-
-    <ion-button expand="block" fill="outline" routerLink="/borradores">
-      Borradores locales
-    </ion-button>
-  </div>
+    <section class="acciones" aria-label="Navegación principal">
+      <ion-button expand="block" routerLink="/productos" class="menu-action">
+        <span><small>01</small> PERFUMES</span>
+        <span class="flecha">→</span>
+      </ion-button>
+      <ion-button expand="block" routerLink="/clientes" class="menu-action">
+        <span><small>02</small> CLIENTES</span>
+        <span class="flecha">→</span>
+      </ion-button>
+      <ion-button expand="block" routerLink="/ventas" class="menu-action">
+        <span><small>03</small> VENTAS</span>
+        <span class="flecha">→</span>
+      </ion-button>
+      <ion-button expand="block" routerLink="/borradores" class="menu-action">
+        <span><small>04</small> BORRADORES LOCALES</span>
+        <span class="flecha">→</span>
+      </ion-button>
+      <ion-button expand="block" fill="clear" class="menu-action secondary" routerLink="/login">
+        <span><small>05</small> CAMBIAR CONEXIÓN</span>
+        <span class="flecha">→</span>
+      </ion-button>
+    </section>
+  </main>
 </ion-content>

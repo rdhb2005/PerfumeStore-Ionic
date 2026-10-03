@@ -1,0 +1,104 @@
+<ion-content [fullscreen]="true" class="login-content">
+  <main class="login-shell">
+    <section class="editorial-panel" aria-hidden="true">
+      <div class="panel-topline">
+        <span>PERFUMESTORE</span>
+        <span>EST. 2026</span>
+      </div>
+
+      <div class="panel-copy">
+        <p class="kicker">CATÁLOGO / CLIENTES / VENTAS</p>
+        <h1>ENTRA.<br />CONECTA.<br />GESTIONA.</h1>
+        <p class="panel-description">
+          Administración de perfumería conectada a una API local mediante Apache y MySQL.
+        </p>
+      </div>
+
+      <div class="bottle-mark">
+        <span class="bottle-cap"></span>
+        <span class="bottle-label">PS</span>
+      </div>
+    </section>
+
+    <section class="login-form-panel">
+      <div class="form-header">
+        <p class="eyebrow">ACCESO AL SISTEMA</p>
+        <h2>INICIAR<br />SESIÓN</h2>
+        <p class="descripcion">
+          Usa tus credenciales y la IP del equipo donde se ejecuta la API de PerfumeStore.
+        </p>
+      </div>
+
+      <form (ngSubmit)="conectar()" class="formulario">
+        <div class="field-group">
+          <span class="field-index">01</span>
+          <ion-input
+            class="editorial-input"
+            label="USUARIO"
+            labelPlacement="stacked"
+            type="text"
+            autocomplete="username"
+            placeholder="admin"
+            name="usuario"
+            [(ngModel)]="usuario">
+          </ion-input>
+        </div>
+
+        <div class="field-group">
+          <span class="field-index">02</span>
+          <ion-input
+            class="editorial-input"
+            label="CONTRASEÑA"
+            labelPlacement="stacked"
+            type="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+            name="contrasena"
+            [(ngModel)]="contrasena">
+          </ion-input>
+        </div>
+
+        <div class="field-group server-field">
+          <span class="field-index">03</span>
+          <ion-input
+            class="editorial-input"
+            label="SERVIDOR API"
+            labelPlacement="stacked"
+            type="text"
+            inputmode="url"
+            autocomplete="off"
+            placeholder="192.168.1.189:80"
+            name="servidor"
+            [(ngModel)]="servidor">
+          </ion-input>
+        </div>
+
+        <div class="server-meta">
+          <span>APACHE :{{ puertoApache }}</span>
+          <span>MYSQL :{{ puertoMysql }}</span>
+        </div>
+
+        <ion-button expand="block" type="submit" class="editorial-action" [disabled]="conectando">
+          @if (conectando) {
+            <ion-spinner name="crescent"></ion-spinner>
+            <span>VALIDANDO</span>
+          } @else {
+            <span>INICIAR SESIÓN</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          }
+        </ion-button>
+      </form>
+
+      @if (mensaje) {
+        <div class="estado" [class.error]="esError" [class.correcto]="!esError">
+          <span class="status-label">{{ esError ? 'ERROR' : 'ESTADO' }}</span>
+          <span>{{ mensaje }}</span>
+        </div>
+      }
+
+      <ion-note>
+        La IP se guarda localmente y se reutiliza en perfumes, clientes, ventas y borradores.
+      </ion-note>
+    </section>
+  </main>
+</ion-content>

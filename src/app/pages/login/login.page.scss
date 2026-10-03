@@ -1,0 +1,346 @@
+:host {
+  --ink: #000000;
+  --bone: #f2e9de;
+  --rose: #ddc9c0;
+}
+
+.login-content {
+  --background: var(--bone);
+}
+
+.login-shell {
+  min-height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(380px, 0.92fr);
+  background: var(--bone);
+}
+
+.editorial-panel,
+.login-form-panel {
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.editorial-panel {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px 34px 34px;
+  color: var(--bone);
+  background: var(--ink);
+  border-right: 1px solid var(--ink);
+  animation: panel-in 520ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.panel-topline,
+.server-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.panel-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+  padding: 80px 0 120px;
+}
+
+.kicker,
+.eyebrow {
+  margin: 0 0 18px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.panel-copy h1,
+.form-header h2 {
+  margin: 0;
+  font-weight: 800;
+  line-height: .82;
+  letter-spacing: -.055em;
+}
+
+.panel-copy h1 {
+  max-width: 920px;
+  font-size: clamp(64px, 10vw, 138px);
+}
+
+.panel-description {
+  max-width: 480px;
+  margin: 34px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.bottle-mark {
+  position: absolute;
+  right: -26px;
+  bottom: -30px;
+  width: 170px;
+  height: 230px;
+  border: 1px solid var(--bone);
+  display: grid;
+  place-items: center;
+  opacity: .42;
+  animation: bottle-drift 5s ease-in-out infinite;
+}
+
+.bottle-cap {
+  position: absolute;
+  top: -38px;
+  width: 64px;
+  height: 38px;
+  border: 1px solid var(--bone);
+  border-bottom: 0;
+}
+
+.bottle-label {
+  width: 84px;
+  height: 92px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--bone);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -.04em;
+}
+
+.login-form-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 54px clamp(28px, 6vw, 88px);
+  background: var(--bone);
+  animation: form-in 620ms 80ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.form-header {
+  max-width: 520px;
+}
+
+.form-header h2 {
+  font-size: clamp(54px, 7vw, 92px);
+}
+
+.descripcion {
+  max-width: 470px;
+  margin: 24px 0 36px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.formulario {
+  display: grid;
+  gap: 0;
+  max-width: 560px;
+  border-top: 1px solid var(--ink);
+}
+
+.field-group {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  align-items: end;
+  border-bottom: 1px solid var(--ink);
+  transition: background 180ms ease;
+}
+
+.field-group:focus-within {
+  background: var(--rose);
+}
+
+.field-index {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+
+.editorial-input {
+  --background: transparent;
+  --color: var(--ink);
+  --placeholder-color: rgba(0, 0, 0, .42);
+  --placeholder-opacity: 1;
+  --padding-start: 16px;
+  --padding-end: 12px;
+  --padding-top: 10px;
+  --padding-bottom: 13px;
+  --highlight-color-focused: transparent;
+  min-height: 76px;
+  font-size: 16px;
+}
+
+.editorial-input::part(label) {
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .09em;
+}
+
+.server-meta {
+  padding: 12px 0 22px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.editorial-action {
+  --background: transparent;
+  --background-hover: transparent;
+  --background-activated: transparent;
+  --color: var(--ink);
+  --border-radius: 0;
+  --box-shadow: none;
+  height: 62px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .09em;
+}
+
+.editorial-action::part(native) {
+  position: relative;
+  justify-content: space-between;
+  padding: 0;
+  border-bottom: 1px solid var(--ink);
+  overflow: hidden;
+}
+
+.editorial-action::part(native)::after {
+  content: '';
+}
+
+.editorial-action:hover .arrow {
+  transform: translateX(7px);
+}
+
+.editorial-action:active {
+  transform: translateY(1px);
+}
+
+.arrow {
+  display: inline-block;
+  font-size: 28px;
+  font-weight: 400;
+  transition: transform 180ms ease;
+}
+
+.editorial-action ion-spinner {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+}
+
+.estado {
+  max-width: 560px;
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--ink);
+  font-size: 12px;
+  line-height: 1.45;
+  animation: status-in 220ms ease both;
+}
+
+.status-label {
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.estado.error {
+  background: var(--rose);
+}
+
+.estado.correcto {
+  background: transparent;
+}
+
+ion-note {
+  max-width: 560px;
+  display: block;
+  margin-top: 18px;
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1.45;
+  letter-spacing: .03em;
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateX(-18px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes form-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes status-in {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bottle-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@media (max-width: 820px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .editorial-panel {
+    min-height: 44vh;
+    padding: 22px 20px 26px;
+    border-right: 0;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .panel-copy {
+    padding: 46px 0 32px;
+  }
+
+  .panel-copy h1 {
+    font-size: clamp(58px, 18vw, 104px);
+  }
+
+  .panel-description {
+    margin-top: 24px;
+  }
+
+  .bottle-mark {
+    width: 112px;
+    height: 154px;
+    right: -20px;
+    bottom: -24px;
+  }
+
+  .bottle-cap {
+    width: 44px;
+    height: 27px;
+    top: -27px;
+  }
+
+  .bottle-label {
+    width: 62px;
+    height: 68px;
+    font-size: 20px;
+  }
+
+  .login-form-panel {
+    min-height: 56vh;
+    padding: 42px 20px 48px;
+  }
+}

@@ -1,3 +1,7 @@
+/**
+ *este archivo es el controla la pantalla de borradores 
+ Desde aqui se mandan llamar las funciones para guardar o modificar los datos.
+ */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {
@@ -55,12 +59,13 @@ export class BorradoresPage implements OnInit {
     private readonly perfumeService: PerfumeService,
     private readonly ventaService: VentaService,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     void this.cargarDatos();
   }
 
+  // Este método carga los borradores locales y los datos de la API.
   async cargarDatos(): Promise<void> {
     this.borradores = await this.borradorService.listar();
     this.cdr.markForCheck();
@@ -92,9 +97,10 @@ export class BorradoresPage implements OnInit {
     return perfume ? perfume.precio * borrador.cantidad : 0;
   }
 
+  // Este método captura los datos y guarda un borrador local.
   async agregarBorrador(): Promise<void> {
     if (this.clientes.length === 0 || this.perfumes.length === 0) {
-      alert('Para crear un borrador, primero debe estar disponible la API con clientes y perfumes.');
+      alert('Para crear un borrador se necesitan clientes y perfumes disponibles desde la API o desde una copia local.');
       return;
     }
 
@@ -125,6 +131,7 @@ export class BorradoresPage implements OnInit {
     alert('Borrador guardado localmente con Capacitor Preferences.');
   }
 
+  // Este método permite modificar un borrador guardado.
   async editarBorrador(borrador: BorradorVenta): Promise<void> {
     const clienteId = this.pedirCliente(borrador.clienteId);
     if (clienteId === null) return;
@@ -154,6 +161,7 @@ export class BorradoresPage implements OnInit {
     alert('Borrador local actualizado.');
   }
 
+  // Este método elimina el borrador seleccionado.
   async eliminarBorrador(borrador: BorradorVenta): Promise<void> {
     if (!confirm('¿Eliminar este borrador del dispositivo?')) return;
 
@@ -163,6 +171,7 @@ export class BorradoresPage implements OnInit {
     alert('Borrador eliminado del almacenamiento local.');
   }
 
+  // Este método convierte el borrador en una venta real de MySQL.
   async registrarVenta(borrador: BorradorVenta): Promise<void> {
     if (!confirm('¿Registrar este borrador como una venta real en MySQL?')) return;
 

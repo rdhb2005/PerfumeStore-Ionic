@@ -1,0 +1,87 @@
+:host {
+  --ink: #000000;
+  --bone: #f2e9de;
+  --rose: #ddc9c0;
+}
+
+.connectivity-banner {
+  position: fixed;
+  z-index: 99999;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 13px 16px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--bone);
+  font-family: inherit;
+  animation: connection-in 220ms ease both;
+}
+
+.connectivity-banner.cache-mode {
+  background: var(--rose);
+  color: var(--ink);
+}
+
+.banner-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.banner-copy strong {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+}
+
+.banner-copy span {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.connectivity-banner button {
+  flex: 0 0 auto;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  padding: 6px 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  cursor: pointer;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.connectivity-banner button:hover {
+  transform: translateX(4px);
+}
+
+.connectivity-banner button:active {
+  transform: translateX(2px) translateY(1px);
+  opacity: .7;
+}
+
+@keyframes connection-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 620px) {
+  .connectivity-banner {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    align-items: flex-start;
+  }
+
+  .connectivity-banner button {
+    white-space: nowrap;
+  }
+}

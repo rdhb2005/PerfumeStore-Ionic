@@ -8,52 +8,54 @@
 </ion-header>
 
 <ion-content>
-  <div class="contenedor">
-    <h2>Persistencia local</h2>
+  <main class="catalog-page">
+    <section class="page-intro">
+      <p class="eyebrow">PERFUMESTORE / 04</p>
+      <h2>PERSISTENCIA<br />LOCAL</h2>
+      <p class="descripcion">
+        Estos borradores se guardan con Capacitor Preferences y permanecen en el dispositivo aunque cierres y vuelvas a abrir la aplicación.
+      </p>
 
-    <p class="descripcion">
-      Estos borradores se guardan con Capacitor Preferences y permanecen en el dispositivo aunque cierres y vuelvas a abrir la aplicación.
-    </p>
+      <ion-button expand="block" (click)="agregarBorrador()" class="primary-action">
+        <span>GUARDAR BORRADOR</span>
+        <span class="flecha">→</span>
+      </ion-button>
+    </section>
 
-    <ion-button expand="block" (click)="agregarBorrador()">
-      + Guardar borrador de venta
-    </ion-button>
+    <section class="records">
+      <ion-card *ngFor="let borrador of borradores">
+        <ion-card-header>
+          <div class="record-number">LOCAL</div>
+          <ion-card-title>{{ obtenerCliente(borrador.clienteId) }}</ion-card-title>
+          <ion-card-subtitle>GUARDADO EN EL DISPOSITIVO</ion-card-subtitle>
+        </ion-card-header>
 
-    <ion-card *ngFor="let borrador of borradores">
-      <ion-card-header>
-        <ion-card-title>
-          {{ obtenerCliente(borrador.clienteId) }}
-        </ion-card-title>
-        <ion-card-subtitle>
-          Guardado localmente
-        </ion-card-subtitle>
-      </ion-card-header>
+        <ion-card-content>
+          <div class="data-grid">
+            <p><span>PERFUME</span><strong>{{ obtenerPerfume(borrador.perfumeId) }}</strong></p>
+            <p><span>CANTIDAD</span><strong>{{ borrador.cantidad }}</strong></p>
+            <p class="total"><span>TOTAL ESTIMADO</span><strong>${{ totalEstimado(borrador) }}</strong></p>
+            <p><span>FECHA</span><strong>{{ borrador.fecha }}</strong></p>
+            <p *ngIf="borrador.notas"><span>NOTAS</span><strong>{{ borrador.notas }}</strong></p>
+          </div>
 
-      <ion-card-content>
-        <p><strong>Perfume:</strong> {{ obtenerPerfume(borrador.perfumeId) }}</p>
-        <p><strong>Cantidad:</strong> {{ borrador.cantidad }}</p>
-        <p><strong>Total estimado:</strong> ${{ totalEstimado(borrador) }}</p>
-        <p><strong>Fecha:</strong> {{ borrador.fecha }}</p>
-        <p *ngIf="borrador.notas"><strong>Notas:</strong> {{ borrador.notas }}</p>
+          <div class="acciones tres-acciones">
+            <ion-button expand="block" (click)="editarBorrador(borrador)" class="record-action">
+              <span>EDITAR</span><span class="flecha">→</span>
+            </ion-button>
+            <ion-button expand="block" color="success" (click)="registrarVenta(borrador)" class="record-action">
+              <span>REGISTRAR VENTA</span><span class="flecha">→</span>
+            </ion-button>
+            <ion-button expand="block" color="danger" (click)="eliminarBorrador(borrador)" class="record-action danger-action">
+              <span>ELIMINAR</span><span class="flecha">→</span>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
 
-        <div class="acciones">
-          <ion-button expand="block" (click)="editarBorrador(borrador)">
-            Editar borrador
-          </ion-button>
-
-          <ion-button expand="block" color="success" (click)="registrarVenta(borrador)">
-            Registrar como venta
-          </ion-button>
-
-          <ion-button expand="block" color="danger" (click)="eliminarBorrador(borrador)">
-            Eliminar borrador
-          </ion-button>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <p class="vacio" *ngIf="borradores.length === 0">
-      No hay borradores guardados en este dispositivo.
-    </p>
-  </div>
+      <p class="vacio" *ngIf="borradores.length === 0">
+        NO HAY BORRADORES GUARDADOS EN ESTE DISPOSITIVO.
+      </p>
+    </section>
+  </main>
 </ion-content>

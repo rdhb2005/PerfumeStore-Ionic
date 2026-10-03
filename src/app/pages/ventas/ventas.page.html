@@ -1,87 +1,54 @@
 <ion-header>
   <ion-toolbar>
-
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-
     <ion-title>Ventas</ion-title>
-
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <main class="catalog-page">
+    <section class="page-intro">
+      <p class="eyebrow">PERFUMESTORE / 03</p>
+      <h2>VENTAS<br />REGISTRADAS</h2>
+      <p class="descripcion">
+        Historial persistente en MySQL. El servidor calcula totales y actualiza el stock.
+      </p>
 
-  <div class="contenedor">
+      <ion-button expand="block" (click)="agregarVenta()" class="primary-action">
+        <span>REGISTRAR VENTA</span>
+        <span class="flecha">→</span>
+      </ion-button>
+    </section>
 
-    <h2>Ventas registradas</h2>
+    <section class="records">
+      <ion-card *ngFor="let venta of ventas">
+        <ion-card-header>
+          <div class="record-number">#{{ venta.id }}</div>
+          <ion-card-title>VENTA {{ venta.id }}</ion-card-title>
+          <ion-card-subtitle>{{ venta.fecha }}</ion-card-subtitle>
+        </ion-card-header>
 
-    <p class="descripcion">
-      Historial persistente en MySQL. El servidor calcula totales y actualiza el stock.
-    </p>
+        <ion-card-content>
+          <div class="data-grid">
+            <p><span>CLIENTE</span><strong>{{ obtenerCliente(venta.clienteId) }}</strong></p>
+            <p><span>PERFUME</span><strong>{{ obtenerPerfume(venta.perfumeId) }}</strong></p>
+            <p><span>CANTIDAD</span><strong>{{ venta.cantidad }}</strong></p>
+            <p><span>PRECIO UNITARIO</span><strong>${{ venta.precioUnitario }}</strong></p>
+            <p class="total"><span>TOTAL</span><strong>${{ venta.total }}</strong></p>
+          </div>
 
-    <ion-button expand="block" (click)="agregarVenta()">
-      + Registrar venta
-    </ion-button>
-
-    <ion-card *ngFor="let venta of ventas">
-
-      <ion-card-header>
-
-        <ion-card-title>
-          Venta #{{ venta.id }}
-        </ion-card-title>
-
-      </ion-card-header>
-
-      <ion-card-content>
-
-        <p>
-          <strong>Cliente:</strong>
-          {{ obtenerCliente(venta.clienteId) }}
-        </p>
-
-        <p>
-          <strong>Perfume:</strong>
-          {{ obtenerPerfume(venta.perfumeId) }}
-        </p>
-
-        <p>
-          <strong>Cantidad:</strong>
-          {{ venta.cantidad }}
-        </p>
-
-        <p>
-          <strong>Precio unitario:</strong>
-          ${{ venta.precioUnitario }}
-        </p>
-
-        <p class="total">
-          <strong>Total:</strong>
-          ${{ venta.total }}
-        </p>
-
-        <p>
-          <strong>Fecha:</strong>
-          {{ venta.fecha }}
-        </p>
-
-        <div class="acciones">
-
-          <ion-button expand="block" (click)="editarVenta(venta)">
-            Editar
-          </ion-button>
-
-          <ion-button expand="block" color="danger" (click)="eliminarVenta(venta)">
-            Eliminar
-          </ion-button>
-
-        </div>
-
-      </ion-card-content>
-
-    </ion-card>
-
-  </div>
-
+          <div class="acciones">
+            <ion-button expand="block" (click)="editarVenta(venta)" class="record-action">
+              <span>EDITAR</span><span class="flecha">→</span>
+            </ion-button>
+            <ion-button expand="block" color="danger" (click)="eliminarVenta(venta)" class="record-action danger-action">
+              <span>ELIMINAR</span><span class="flecha">→</span>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+  </main>
 </ion-content>

@@ -1,72 +1,51 @@
 <ion-header>
   <ion-toolbar>
-
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-
     <ion-title>Clientes</ion-title>
-
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <main class="catalog-page">
+    <section class="page-intro">
+      <p class="eyebrow">PERFUMESTORE / 02</p>
+      <h2>CLIENTES<br />REGISTRADOS</h2>
+      <p class="descripcion">
+        Administración de clientes persistentes en MySQL mediante la API PHP.
+      </p>
 
-  <div class="contenedor">
+      <ion-button expand="block" (click)="agregarCliente()" class="primary-action">
+        <span>AGREGAR CLIENTE</span>
+        <span class="flecha">→</span>
+      </ion-button>
+    </section>
 
-    <h2>Clientes registrados</h2>
+    <section class="records">
+      <ion-card *ngFor="let cliente of clientes">
+        <ion-card-header>
+          <div class="record-number">#{{ cliente.id }}</div>
+          <ion-card-title>{{ cliente.nombre }}</ion-card-title>
+          <ion-card-subtitle>CLIENTE PERFUMESTORE</ion-card-subtitle>
+        </ion-card-header>
 
-    <p class="descripcion">
-      Administración de clientes persistentes en MySQL mediante la API PHP.
-    </p>
+        <ion-card-content>
+          <div class="data-grid">
+            <p><span>TELÉFONO</span><strong>{{ cliente.telefono }}</strong></p>
+            <p><span>CORREO</span><strong>{{ cliente.correo }}</strong></p>
+          </div>
 
-    <ion-button expand="block" (click)="agregarCliente()">
-      + Agregar cliente
-    </ion-button>
-
-    <ion-card *ngFor="let cliente of clientes">
-
-      <ion-card-header>
-
-        <ion-card-title>
-          {{ cliente.nombre }}
-        </ion-card-title>
-
-      </ion-card-header>
-
-      <ion-card-content>
-
-        <p>
-          <strong>ID:</strong>
-          {{ cliente.id }}
-        </p>
-
-        <p>
-          <strong>Teléfono:</strong>
-          {{ cliente.telefono }}
-        </p>
-
-        <p>
-          <strong>Correo:</strong>
-          {{ cliente.correo }}
-        </p>
-
-        <div class="acciones">
-
-          <ion-button expand="block" (click)="editarCliente(cliente)">
-            Editar
-          </ion-button>
-
-          <ion-button expand="block" color="danger" (click)="eliminarCliente(cliente)">
-            Eliminar
-          </ion-button>
-
-        </div>
-
-      </ion-card-content>
-
-    </ion-card>
-
-  </div>
-
+          <div class="acciones">
+            <ion-button expand="block" (click)="editarCliente(cliente)" class="record-action">
+              <span>EDITAR</span><span class="flecha">→</span>
+            </ion-button>
+            <ion-button expand="block" color="danger" (click)="eliminarCliente(cliente)" class="record-action danger-action">
+              <span>ELIMINAR</span><span class="flecha">→</span>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+  </main>
 </ion-content>

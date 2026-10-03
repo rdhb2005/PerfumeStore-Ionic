@@ -8,6 +8,7 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
+  IonCardSubtitle,
   IonCardContent,
   IonButton,
   IonButtons,
@@ -35,6 +36,7 @@ import { PerfumeService } from '../../services/perfume.service';
     IonCard,
     IonCardHeader,
     IonCardTitle,
+    IonCardSubtitle,
     IonCardContent,
     IonButton,
     IonButtons,
@@ -57,6 +59,7 @@ export class VentasPage implements OnInit {
     void this.cargarDatos();
   }
 
+  // Este método carga ventas, clientes y perfumes desde la API.
   async cargarDatos(): Promise<void> {
     try {
       const [ventas, clientes, perfumes] = await Promise.all([
@@ -82,6 +85,7 @@ export class VentasPage implements OnInit {
     return perfume ? `${perfume.nombre} - ${perfume.marca}` : 'Perfume no encontrado';
   }
 
+  // Este método valida los datos y registra una venta.
   async agregarVenta(): Promise<void> {
     if (this.clientes.length === 0) {
       alert('Primero debes registrar un cliente.');
@@ -138,6 +142,7 @@ export class VentasPage implements OnInit {
     }
   }
 
+  // Este método permite modificar una venta registrada.
   async editarVenta(venta: Venta): Promise<void> {
     const listaClientes = this.clientes.map((cliente) => `${cliente.id} - ${cliente.nombre}`).join('\n');
     const clienteTexto = prompt(`ID del cliente:\n\n${listaClientes}`, venta.clienteId.toString());
@@ -187,6 +192,7 @@ export class VentasPage implements OnInit {
     }
   }
 
+  // Este método elimina una venta y actualiza la información.
   async eliminarVenta(venta: Venta): Promise<void> {
     if (!confirm(`¿Eliminar la venta #${venta.id}?`)) return;
 

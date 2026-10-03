@@ -1,81 +1,52 @@
 <ion-header>
   <ion-toolbar>
-
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-
     <ion-title>Perfumes</ion-title>
-
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <main class="catalog-page">
+    <section class="page-intro">
+      <p class="eyebrow">PERFUMESTORE / 01</p>
+      <h2>CATÁLOGO<br />DE PERFUMES</h2>
+      <p class="descripcion">
+        Administración de perfumes persistentes en MySQL mediante la API PHP.
+      </p>
 
-  <div class="contenedor">
+      <ion-button expand="block" (click)="agregarPerfume()" class="primary-action">
+        <span>AGREGAR PERFUME</span>
+        <span class="flecha">→</span>
+      </ion-button>
+    </section>
 
-    <h2>Catálogo de perfumes</h2>
+    <section class="records">
+      <ion-card *ngFor="let perfume of perfumes">
+        <ion-card-header>
+          <div class="record-number">#{{ perfume.id }}</div>
+          <ion-card-title>{{ perfume.nombre }}</ion-card-title>
+          <ion-card-subtitle>{{ perfume.marca }}</ion-card-subtitle>
+        </ion-card-header>
 
-    <p class="descripcion">
-      Administración de perfumes persistentes en MySQL mediante la API PHP.
-    </p>
+        <ion-card-content>
+          <div class="data-grid">
+            <p><span>TIPO</span><strong>{{ perfume.tipo }}</strong></p>
+            <p><span>PRECIO</span><strong>${{ perfume.precio }}</strong></p>
+            <p><span>STOCK</span><strong>{{ perfume.stock }}</strong></p>
+          </div>
 
-    <ion-button expand="block" (click)="agregarPerfume()">
-      + Agregar perfume
-    </ion-button>
-
-    <ion-card *ngFor="let perfume of perfumes">
-
-      <ion-card-header>
-
-        <ion-card-title>
-          {{ perfume.nombre }}
-        </ion-card-title>
-
-        <ion-card-subtitle>
-          {{ perfume.marca }}
-        </ion-card-subtitle>
-
-      </ion-card-header>
-
-      <ion-card-content>
-
-        <p>
-          <strong>ID:</strong>
-          {{ perfume.id }}
-        </p>
-
-        <p>
-          <strong>Tipo:</strong>
-          {{ perfume.tipo }}
-        </p>
-
-        <p>
-          <strong>Precio:</strong>
-          ${{ perfume.precio }}
-        </p>
-
-        <p>
-          <strong>Stock:</strong>
-          {{ perfume.stock }}
-        </p>
-
-        <div class="acciones">
-
-          <ion-button expand="block" (click)="editarPerfume(perfume)">
-            Editar
-          </ion-button>
-
-          <ion-button expand="block" color="danger" (click)="eliminarPerfume(perfume)">
-            Eliminar
-          </ion-button>
-
-        </div>
-
-      </ion-card-content>
-
-    </ion-card>
-
-  </div>
-
+          <div class="acciones">
+            <ion-button expand="block" (click)="editarPerfume(perfume)" class="record-action">
+              <span>EDITAR</span><span class="flecha">→</span>
+            </ion-button>
+            <ion-button expand="block" color="danger" (click)="eliminarPerfume(perfume)" class="record-action danger-action">
+              <span>ELIMINAR</span><span class="flecha">→</span>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+  </main>
 </ion-content>

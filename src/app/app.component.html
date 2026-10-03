@@ -1,3 +1,13 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
+
+  @if (mostrarAvisoConexion) {
+    <aside class="connectivity-banner" [class.cache-mode]="usoCache.activo" role="status" aria-live="polite">
+      <div class="banner-copy">
+        <strong>{{ tituloAviso }}</strong>
+        <span>{{ mensajeAviso }}</span>
+      </div>
+      <button type="button" (click)="reintentarConexion()">COMPROBAR →</button>
+    </aside>
+  }
 </ion-app>

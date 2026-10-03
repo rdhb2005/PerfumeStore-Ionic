@@ -8,6 +8,7 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
+  IonCardSubtitle,
   IonCardContent,
   IonButton,
   IonButtons,
@@ -31,6 +32,7 @@ import { ClienteService } from '../../services/cliente.service';
     IonCard,
     IonCardHeader,
     IonCardTitle,
+    IonCardSubtitle,
     IonCardContent,
     IonButton,
     IonButtons,
@@ -49,6 +51,7 @@ export class ClientesPage implements OnInit {
     void this.cargarClientes();
   }
 
+  // Este método carga los clientes registrados.
   async cargarClientes(): Promise<void> {
     try {
       this.clientes = await this.clienteService.listar();
@@ -58,6 +61,7 @@ export class ClientesPage implements OnInit {
     }
   }
 
+  // Este método solicita los datos y registra un cliente.
   async agregarCliente(): Promise<void> {
     const nombre = prompt('Nombre del cliente:');
     if (!nombre?.trim()) return;
@@ -81,6 +85,7 @@ export class ClientesPage implements OnInit {
     }
   }
 
+  // Este método permite modificar un cliente.
   async editarCliente(cliente: Cliente): Promise<void> {
     const nombre = prompt('Nombre:', cliente.nombre);
     if (!nombre?.trim()) return;
@@ -104,6 +109,7 @@ export class ClientesPage implements OnInit {
     }
   }
 
+  // Este método elimina el cliente seleccionado.
   async eliminarCliente(cliente: Cliente): Promise<void> {
     if (!confirm(`¿Eliminar al cliente ${cliente.nombre}?`)) return;
 

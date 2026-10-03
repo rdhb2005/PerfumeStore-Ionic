@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
-
-/**
- * Persistencia clave-valor local con Capacitor Preferences.
- * En ionic serve usa el almacenamiento web de Capacitor; en una app nativa
- * utiliza el almacenamiento persistente propio de Android/iOS.
- */
+/*
+En este archivo se maneja la persistencia local. Se utiliza Capacitor Preferences para guardar, consultar y eliminar información aunque la aplicación se cierre.
+*/
 @Injectable({ providedIn: 'root' })
 export class AlmacenamientoService {
+  // Este método lee un dato guardado en Preferences.
   async leer<T>(clave: string, predeterminado: T): Promise<T> {
     const { value } = await Preferences.get({ key: clave });
 
@@ -22,10 +20,12 @@ export class AlmacenamientoService {
     }
   }
 
+  // Este método guarda información de forma local.
   guardar(clave: string, valor: unknown): Promise<void> {
     return Preferences.set({ key: clave, value: JSON.stringify(valor) });
   }
 
+  // Este método elimina un dato guardado.
   eliminar(clave: string): Promise<void> {
     return Preferences.remove({ key: clave });
   }
