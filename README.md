@@ -1,101 +1,139 @@
 # PerfumeStore
 
-PerfumeStore es una aplicación desarrollada con Ionic y Angular para administrar perfumes, clientes y ventas.
+PerfumeStore es una aplicación desarrollada con Ionic y Angular para administrar perfumes, clientes y ventas. El proyecto utiliza una API desarrollada en PHP y una base de datos MySQL para almacenar la información principal. También cuenta con persistencia local, inicio de sesión, manejo de errores y una estrategia básica para seguir consultando información cuando existe algún problema de conexión.
 
-## Actividad 3: Persistencia local en Ionic
+## Tecnologías utilizadas
 
-Esta versión utiliza dos tipos de persistencia:
+- Ionic
+- Angular
+- TypeScript
+- Capacitor Preferences
+- PHP
+- MySQL
+- XAMPP
+- Git y GitHub
 
-- **MySQL + API PHP:** almacena de forma permanente los perfumes, clientes y ventas.
-- **Capacitor Preferences:** guarda borradores de venta localmente en el dispositivo, incluso después de cerrar y volver a abrir la aplicación.
+## Inicio de sesión
 
-La estructura sigue la misma idea usada en clase: las páginas consumen servicios Angular; los datos principales viajan a una API PHP y los borradores locales pasan por un servicio de almacenamiento basado en Preferences.
+La aplicación cuenta con una pantalla de inicio de sesión donde se solicita usuario, contraseña y la dirección del servidor donde se encuentran las APIs.
 
-## Requisitos
+Usuario de prueba:
 
-- Node.js y npm
-- Ionic CLI
-- XAMPP con Apache y MySQL activos
-- Backend `perfumestore_api` dentro de `/Applications/XAMPP/xamppfiles/htdocs/`
-- Base de datos `perfumestore` importada desde `database.sql`
+admin
 
-## Instalación
+Contraseña:
 
-```bash
-npm install
-ionic serve
-```
+admin123
 
-La API debe responder en:
+Ejemplo de servidor:
 
-```text
-http://localhost/perfumestore_api
-```
+192.168.1.194:80
 
-## Funcionalidades
+La dirección IP puede cambiar dependiendo de la red a la que se encuentre conectado el equipo.
 
-### Perfumes
+## Perfumes
 
-- Alta
-- Consulta
-- Modificación
-- Eliminación
-- Persistencia en MySQL
+La sección de perfumes permite realizar las operaciones principales del CRUD:
 
-### Clientes
+- Alta de perfumes.
+- Consulta de perfumes.
+- Modificación de perfumes.
+- Eliminación de perfumes.
+- Persistencia de la información en MySQL.
 
-- Alta
-- Consulta
-- Modificación
-- Eliminación
-- Persistencia en MySQL
+## Clientes
 
-### Ventas
+La sección de clientes permite:
 
-- Alta
-- Consulta
-- Modificación
-- Eliminación
-- Cálculo del total en el servidor
-- Descuento y restauración de stock desde la API
-- Persistencia en MySQL
+- Alta de clientes.
+- Consulta de clientes.
+- Modificación de clientes.
+- Eliminación de clientes.
+- Persistencia de la información en MySQL.
 
-### Borradores locales
+## Ventas
 
-Los borradores de venta se guardan con `@capacitor/preferences`.
+La sección de ventas permite:
 
-- Alta local
-- Consulta local
-- Modificación local
-- Eliminación local
-- Permanecen después de cerrar/reabrir la aplicación
-- Se pueden convertir posteriormente en una venta real almacenada en MySQL
+- Registrar ventas.
+- Consultar ventas.
+- Modificar ventas.
+- Eliminar ventas.
+- Calcular el total de la venta.
+- Actualizar el stock de los perfumes.
+- Guardar las ventas en MySQL.
+
+## Borradores locales
+
+La aplicación permite crear borradores de venta que se almacenan localmente mediante Capacitor Preferences.
+
+Los borradores pueden crearse, consultarse, modificarse y eliminarse. También permanecen guardados después de cerrar y volver a abrir la aplicación y posteriormente pueden convertirse en una venta almacenada en MySQL.
+
+## Manejo de conexión y errores
+
+PerfumeStore puede detectar problemas de conexión con el servidor y mostrar mensajes al usuario dependiendo de la situación.
+
+La aplicación puede identificar cuando se encuentra conectada correctamente, cuando no existe conexión o cuando la API no se encuentra disponible.
+
+Si ocurre un problema al realizar una consulta, la aplicación puede utilizar la última información almacenada localmente. Las operaciones que modifican información en MySQL necesitan conexión con el servidor para evitar mostrar datos como guardados cuando realmente no llegaron a la base de datos.
+
+## Caché local
+
+Se utiliza Capacitor Preferences para almacenar temporalmente la última información consultada de:
+
+- Perfumes.
+- Clientes.
+- Ventas.
+
+Esto permite seguir mostrando la última información disponible cuando la API no puede ser consultada temporalmente.
 
 ## Servicios principales
 
-```text
-src/app/services/api.service.ts
-src/app/services/almacenamiento.service.ts
-src/app/services/perfume.service.ts
-src/app/services/cliente.service.ts
-src/app/services/venta.service.ts
+Los principales servicios utilizados en el proyecto son:
+
+src/app/services/api.service.ts  
+src/app/services/almacenamiento.service.ts  
+src/app/services/cache.service.ts  
+src/app/services/conexion.service.ts  
+src/app/services/estado-conexion.service.ts  
+src/app/services/perfume.service.ts  
+src/app/services/cliente.service.ts  
+src/app/services/venta.service.ts  
 src/app/services/borrador-venta.service.ts
-```
 
-## API en dispositivo físico
+## Requisitos
 
-En `src/environments/environment.ts`, `localhost` funciona cuando Ionic y XAMPP se ejecutan en la misma Mac. En un dispositivo físico se debe sustituir por la IP local de la Mac, por ejemplo:
+Para ejecutar el proyecto se necesita:
 
-```text
-http://192.168.1.50/perfumestore_api
-```
+- Node.js.
+- npm.
+- Ionic CLI.
+- XAMPP.
+- Apache activo.
+- MySQL activo.
+- La carpeta perfumestore_api dentro de /Applications/XAMPP/xamppfiles/htdocs/
+- La base de datos perfumestore.
 
-## Video sugerido para la actividad
+## Instalación
 
-1. Abrir **Borradores locales**.
-2. Crear un borrador.
-3. Cerrar la aplicación o pestaña.
-4. Volver a abrirla y mostrar que el borrador continúa guardado.
-5. Editarlo y volver a abrir la aplicación para comprobar el cambio.
-6. Eliminarlo o registrarlo como venta.
-7. Mostrar en phpMyAdmin que una venta registrada sí aparece en MySQL.
+Primero se deben instalar las dependencias del proyecto con:
+
+npm install
+
+Después se puede iniciar la aplicación con:
+
+ionic serve
+
+La API debe encontrarse disponible desde la dirección configurada en el login. Por ejemplo:
+
+http://192.168.1.194:80/perfumestore_api/
+
+## Funcionamiento general
+
+La aplicación Ionic se comunica con los servicios de Angular, los cuales realizan las peticiones hacia la API desarrollada en PHP. La API se conecta con MySQL para consultar y modificar la información de perfumes, clientes y ventas.
+
+Para la información local, la aplicación utiliza Capacitor Preferences, principalmente para los borradores y la caché utilizada cuando existe algún problema de conexión.
+
+## Repositorio
+
+https://github.com/rdhb2005/PerfumeStore-Ionic
