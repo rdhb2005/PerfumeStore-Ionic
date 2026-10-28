@@ -8,6 +8,9 @@ PerfumeStore es una aplicación desarrollada con Ionic y Angular para administra
 - Angular
 - TypeScript
 - Capacitor Preferences
+- Capacitor Camera
+- Capacitor Filesystem
+- exifr
 - PHP
 - MySQL
 - XAMPP
@@ -40,6 +43,14 @@ La sección de perfumes permite realizar las operaciones principales del CRUD:
 - Modificación de perfumes.
 - Eliminación de perfumes.
 - Persistencia de la información en MySQL.
+
+## Multimedia en perfumes
+
+Cada perfume puede tener una fotografía local asociada. La aplicación permite tomar una foto con la cámara o elegir una imagen de la galería. La imagen se copia al almacenamiento privado de la aplicación mediante Capacitor Filesystem y la referencia se relaciona con el identificador del perfume.
+
+También se muestran metadatos básicos cuando están disponibles, como fecha, dispositivo, resolución, formato y tamaño. La lectura se apoya en los metadatos del plugin de cámara y en `exifr`. La interfaz no muestra coordenadas GPS.
+
+La fotografía puede abrirse en una vista ampliada, cambiarse o eliminarse desde la misma pantalla de perfumes.
 
 ## Clientes
 
@@ -85,7 +96,7 @@ Se utiliza Capacitor Preferences para almacenar temporalmente la última informa
 - Clientes.
 - Ventas.
 
-Esto permite seguir mostrando la última información disponible cuando la API no puede ser consultada temporalmente.
+Esto permite seguir mostrando la última información disponible cuando la API no puede ser consultada temporalmente. El indicador de modo local se conserva hasta que la sincronización de perfumes, clientes y ventas termina correctamente; no se elimina únicamente porque Apache vuelva a responder.
 
 ## Servicios principales
 
@@ -99,7 +110,9 @@ src/app/services/estado-conexion.service.ts
 src/app/services/perfume.service.ts  
 src/app/services/cliente.service.ts  
 src/app/services/venta.service.ts  
-src/app/services/borrador-venta.service.ts
+src/app/services/borrador-venta.service.ts  
+src/app/services/sincronizacion.service.ts  
+src/app/services/multimedia.service.ts
 
 ## Requisitos
 
@@ -137,3 +150,19 @@ Para la información local, la aplicación utiliza Capacitor Preferences, princi
 ## Repositorio
 
 https://github.com/rdhb2005/PerfumeStore-Ionic
+## Arquitectura Cliente-Servidor
+
+PerfumeStore trabaja con una arquitectura Cliente → API → Base de datos. Ionic/Angular funciona como cliente móvil, la API PHP recibe las peticiones HTTP y MySQL almacena la información. Los endpoints están centralizados en `src/app/config/api-endpoints.ts` y los contratos JSON comunes en `src/app/models/api.model.ts`.
+
+La descripción completa de endpoints, métodos HTTP, modelos JSON y flujo de comunicación está en `docs/arquitectura-cliente-servidor.md`.
+
+## Sincronización local-remota
+
+PerfumeStore mantiene una copia local de perfumes, clientes y ventas mediante Capacitor Preferences. Cuando la API está disponible, la aplicación actualiza esas copias desde PHP/MySQL. Si se pierde la conexión, las consultas pueden utilizar la última copia local disponible. Al recuperar la conexión, `SincronizacionService` vuelve a consultar el servidor, actualiza la caché y registra la fecha de la última sincronización.
+
+El diagrama y la explicación técnica se encuentran en `docs/sincronizacion-local-remota.md`.
+
+
+## Multimedia e interacción gráfica
+
+La actividad de multimedia se implementa dentro del catálogo de perfumes. Se puede usar cámara o galería, guardar la fotografía de forma persistente en el dispositivo, consultar metadatos básicos y abrir un visor responsivo. La explicación técnica se encuentra en `docs/multimedia-interaccion-grafica.md`.

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ConexionService } from './conexion.service';
+import { API_ENDPOINTS } from '../config/api-endpoints';
 
 export type TipoEstadoConexion =
   | 'sin-configurar'
@@ -28,6 +29,11 @@ export class EstadoConexionService {
   });
 
   readonly estado$ = this.estadoSubject.asObservable();
+
+  /** Estado más reciente para decisiones inmediatas como una sincronización manual. */
+  get estadoActual(): EstadoConexion {
+    return this.estadoSubject.value;
+  }
 
   private iniciado = false;
   private intervalo: ReturnType<typeof setInterval> | null = null;
@@ -95,7 +101,7 @@ export class EstadoConexionService {
     const temporizador = setTimeout(() => controlador.abort(), 4500);
 
     try {
-      const respuesta = await fetch(`${apiUrl}/index.php`, {
+      const respuesta = await fetch(`${apiUrl}/${API_ENDPOINTS.estado}`, {
         method: 'GET',
         cache: 'no-store',
         signal: controlador.signal,

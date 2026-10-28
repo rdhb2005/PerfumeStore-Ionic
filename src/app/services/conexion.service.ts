@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { environment } from '../../environments/environment';
+import { API_ENDPOINTS } from '../config/api-endpoints';
+import { LoginSolicitud, RespuestaEstadoApi } from '../models/api.model';
 
 @Injectable({ providedIn: 'root' })
 export class ConexionService {
@@ -39,7 +41,7 @@ export class ConexionService {
   // Comprueba que Apache responda antes de entrar a la aplicación.
   async probarConexion(valor: string): Promise<string> {
     const servidor = this.normalizarServidor(valor);
-    const url = `${this.formarApiUrl(servidor)}/index.php`;
+    const url = `${this.formarApiUrl(servidor)}/${API_ENDPOINTS.estado}`;
 
     let respuesta: Response;
 
@@ -53,10 +55,10 @@ export class ConexionService {
       throw new Error('No se pudo conectar con Apache. Verifica la IP, el puerto 80 y que ambos equipos estén en la misma red.');
     }
 
-    let cuerpo: { success?: boolean; message?: string };
+    let cuerpo: RespuestaEstadoApi;
 
     try {
-      cuerpo = (await respuesta.json()) as { success?: boolean; message?: string };
+      cuerpo = (await respuesta.json()) as RespuestaEstadoApi;
     } catch {
       throw new Error('Apache respondió, pero el endpoint de PerfumeStore no devolvió JSON válido.');
     }
@@ -70,14 +72,14 @@ export class ConexionService {
 
   // Valida el usuario y la contraseña contra la API del servidor seleccionado.
   async iniciarSesion(servidor: string, usuario: string, contrasena: string): Promise<void> {
-    const url = `${this.formarApiUrl(this.normalizarServidor(servidor))}/login.php`;
+    const url = `${this.formarApiUrl(this.normalizarServidor(servidor))}/${API_ENDPOINTS.login}`;
     let respuesta: Response;
 
     try {
       respuesta = await this.fetchConTimeout(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ usuario, contrasena }),
+        body: JSON.stringify({ usuario, contrasena } satisfies LoginSolicitud),
       });
     } catch (error) {
       if (this.esTimeout(error)) {
@@ -87,10 +89,10 @@ export class ConexionService {
       throw new Error('No se pudo contactar el servicio de inicio de sesión.');
     }
 
-    let cuerpo: { success?: boolean; message?: string };
+    let cuerpo: RespuestaEstadoApi;
 
     try {
-      cuerpo = (await respuesta.json()) as { success?: boolean; message?: string };
+      cuerpo = (await respuesta.json()) as RespuestaEstadoApi;
     } catch {
       throw new Error('El servidor respondió, pero el inicio de sesión no devolvió JSON válido.');
     }

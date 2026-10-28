@@ -7,7 +7,7 @@
 .home-shell {
   width: min(100%, 1440px);
   margin: 0 auto;
-  animation: page-in 420ms ease both;
+  animation: page-in 220ms cubic-bezier(.22, 1, .36, 1) both;
 }
 
 .hero-editorial {
@@ -175,19 +175,12 @@ h1 {
 .menu-action .flecha {
   font-size: 28px;
   font-weight: 400;
-  transition: transform 180ms ease;
+  transition: transform 160ms cubic-bezier(.22, 1, .36, 1);
 }
 
-.menu-action:hover {
-  --background: var(--rose);
-}
-
-.menu-action:hover .flecha {
-  transform: translateX(7px);
-}
 
 .menu-action:active {
-  transform: translateY(1px);
+  transform: scale(.985);
 }
 
 .secondary {
@@ -251,4 +244,106 @@ h1 {
   .menu-action:nth-child(even)::part(native) {
     border-right: 0;
   }
+}
+
+.sync-panel {
+  display: grid;
+  grid-template-columns: 1.3fr .7fr;
+  border-bottom: 1px solid var(--ink);
+  background: rgba(255, 255, 255, .18);
+}
+
+.sync-copy {
+  padding: 28px clamp(22px, 6vw, 82px);
+  border-right: 1px solid var(--ink);
+}
+
+.sync-copy .eyebrow {
+  margin-bottom: 14px;
+}
+
+.sync-status-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.sync-status-line strong {
+  font-size: 20px;
+  letter-spacing: -.02em;
+}
+
+.sync-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--ink);
+}
+
+.sync-dot.offline {
+  background: transparent;
+  border: 1px solid var(--ink);
+}
+
+.sync-dot.busy {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.sync-message {
+  max-width: 620px;
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.sync-copy small {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.sync-action {
+  --background: transparent;
+  --background-hover: var(--rose);
+  --background-activated: var(--rose);
+  --color: var(--ink);
+  --border-radius: 0;
+  --box-shadow: none;
+  min-height: 100%;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.sync-action::part(native) {
+  justify-content: space-between;
+  padding: 24px 30px;
+}
+
+.sync-action ion-spinner {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+}
+
+@media (max-width: 760px) {
+  .sync-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .sync-copy {
+    padding: 24px 20px;
+    border-right: 0;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .sync-action {
+    min-height: 70px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-action:hover { --background: var(--rose); }
+  .menu-action:hover .flecha { transform: translateX(5px); }
 }

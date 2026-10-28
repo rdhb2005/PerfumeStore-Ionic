@@ -2,16 +2,24 @@ import { Injectable, inject } from '@angular/core';
 import { Cliente } from '../models/cliente.model';
 import { ApiService } from './api.service';
 import { CacheService } from './cache.service';
+import { API_ENDPOINTS } from '../config/api-endpoints';
 
 @Injectable({ providedIn: 'root' })
 export class ClienteService {
   private readonly api = inject(ApiService);
   private readonly cache = inject(CacheService);
-  private readonly archivo = 'clientes.php';
+  private readonly archivo = API_ENDPOINTS.clientes;
 
   // Este método consulta los clientes y usa la última copia local si la API falla.
   listar(): Promise<Cliente[]> {
     return this.cache.obtenerConRespaldo('clientes', () => this.api.get<Cliente[]>(this.archivo));
+  }
+
+  // Actualiza la copia local únicamente con una respuesta real del servidor.
+  sincronizarDesdeServidor(): Promise<Cliente[]> {
+    return this.cache.actualizarDesdeRemoto('clientes', () =>
+      this.api.get<Cliente[]>(this.archivo),
+    );
   }
 
   obtener(id: number): Promise<Cliente> {

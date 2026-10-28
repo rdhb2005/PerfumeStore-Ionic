@@ -3,6 +3,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { CacheService, EstadoUsoCache } from './services/cache.service';
 import { EstadoConexion, EstadoConexionService } from './services/estado-conexion.service';
+import { SincronizacionService } from './services/sincronizacion.service';
 
 @Component({
   selector: 'app-root',
@@ -28,6 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private readonly estadoConexionService: EstadoConexionService,
     private readonly cacheService: CacheService,
+    private readonly sincronizacionService: SincronizacionService,
     private readonly cdr: ChangeDetectorRef,
   ) {}
 
@@ -47,10 +49,12 @@ export class AppComponent implements OnInit, OnDestroy {
     );
 
     this.estadoConexionService.iniciarMonitoreo();
+    this.sincronizacionService.iniciar();
   }
 
   ngOnDestroy(): void {
     this.suscripciones.unsubscribe();
+    this.sincronizacionService.detener();
     this.estadoConexionService.detenerMonitoreo();
   }
 
@@ -61,7 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   get tituloAviso(): string {
-    if (this.usoCache.activo) return 'MODO CACHÉ';
+    if (this.usoCache.activo) return 'MODO LOCAL';
     if (this.estadoRed.tipo === 'sin-red') return 'SIN CONEXIÓN';
     return 'SERVIDOR NO DISPONIBLE';
   }
@@ -69,7 +73,7 @@ export class AppComponent implements OnInit, OnDestroy {
   get mensajeAviso(): string {
     if (this.usoCache.activo) {
       const fecha = this.formatearFecha(this.usoCache.guardadoEn);
-      return `Mostrando la última copia local de ${this.usoCache.recurso}${fecha ? ` · ${fecha}` : ''}.`;
+      return `Usando la última copia local de ${this.usoCache.recurso}${fecha ? ` · ${fecha}` : ''}. Se mantendrá así hasta completar la sincronización.`;
     }
 
     if (this.estadoRed.tipo === 'sin-red') {

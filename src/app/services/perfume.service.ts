@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Perfume } from '../models/perfume.model';
 import { ApiService } from './api.service';
 import { CacheService } from './cache.service';
+import { API_ENDPOINTS } from '../config/api-endpoints';
 /**
  Este servicio utiliza ApiService para trabajar con los perfumes
 Permite listar, crear, modificar y eliminar registros mediante el endpoint perfumes.php
@@ -10,11 +11,18 @@ Permite listar, crear, modificar y eliminar registros mediante el endpoint perfu
 export class PerfumeService {
   private readonly api = inject(ApiService);
   private readonly cache = inject(CacheService);
-  private readonly archivo = 'perfumes.php';
+  private readonly archivo = API_ENDPOINTS.perfumes;
 
   // Este método consulta los perfumes y usa la última copia local si la API falla.
   listar(): Promise<Perfume[]> {
     return this.cache.obtenerConRespaldo('perfumes', () => this.api.get<Perfume[]>(this.archivo));
+  }
+
+  // Actualiza la copia local únicamente con una respuesta real del servidor.
+  sincronizarDesdeServidor(): Promise<Perfume[]> {
+    return this.cache.actualizarDesdeRemoto('perfumes', () =>
+      this.api.get<Perfume[]>(this.archivo),
+    );
   }
 
   obtener(id: number): Promise<Perfume> {

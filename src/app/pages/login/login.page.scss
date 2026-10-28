@@ -31,7 +31,7 @@
   color: var(--bone);
   background: var(--ink);
   border-right: 1px solid var(--ink);
-  animation: panel-in 520ms cubic-bezier(.2,.8,.2,1) both;
+  animation: panel-in 260ms cubic-bezier(.22,1,.36,1) both;
 }
 
 .panel-topline,
@@ -120,7 +120,7 @@
   justify-content: center;
   padding: 54px clamp(28px, 6vw, 88px);
   background: var(--bone);
-  animation: form-in 620ms 80ms cubic-bezier(.2,.8,.2,1) both;
+  animation: form-in 280ms 40ms cubic-bezier(.22,1,.36,1) both;
 }
 
 .form-header {
@@ -150,7 +150,7 @@
   grid-template-columns: 46px 1fr;
   align-items: end;
   border-bottom: 1px solid var(--ink);
-  transition: background 180ms ease;
+  transition: background-color 160ms cubic-bezier(.22,1,.36,1);
 }
 
 .field-group:focus-within {
@@ -220,19 +220,16 @@
   content: '';
 }
 
-.editorial-action:hover .arrow {
-  transform: translateX(7px);
-}
 
 .editorial-action:active {
-  transform: translateY(1px);
+  transform: scale(.985);
 }
 
 .arrow {
   display: inline-block;
   font-size: 28px;
   font-weight: 400;
-  transition: transform 180ms ease;
+  transition: transform 160ms cubic-bezier(.22, 1, .36, 1);
 }
 
 .editorial-action ion-spinner {
@@ -250,7 +247,7 @@
   border-bottom: 1px solid var(--ink);
   font-size: 12px;
   line-height: 1.45;
-  animation: status-in 220ms ease both;
+  animation: status-in 180ms cubic-bezier(.22,1,.36,1) both;
 }
 
 .status-label {
@@ -343,4 +340,8 @@ ion-note {
     min-height: 56vh;
     padding: 42px 20px 48px;
   }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .editorial-action:hover .arrow { transform: translateX(5px); }
 }

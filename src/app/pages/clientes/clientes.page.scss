@@ -1,5 +1,5 @@
 :host { --ink: #000000; --bone: #f2e9de; --rose: #ddc9c0; }
-.catalog-page { width: min(100%, 1100px); margin: 0 auto; animation: page-in 420ms ease both; }
+.catalog-page { width: min(100%, 1100px); margin: 0 auto; animation: page-in 220ms cubic-bezier(.22, 1, .36, 1) both; }
 .page-intro { padding: clamp(42px, 7vw, 82px) 20px 0; }
 .eyebrow { margin: 0 0 18px; font-size: 11px; font-weight: 700; letter-spacing: .09em; }
 h2 { margin: 0; max-width: 850px; font-size: clamp(58px, 9vw, 116px); font-weight: 800; line-height: .84; letter-spacing: -.055em; }
@@ -7,12 +7,10 @@ h2 { margin: 0; max-width: 850px; font-size: clamp(58px, 9vw, 116px); font-weigh
 .primary-action, .record-action { --background: transparent; --background-hover: transparent; --background-activated: transparent; --color: var(--ink); --border-radius: 0; --box-shadow: none; margin: 0; font-size: 12px; font-weight: 800; letter-spacing: .08em; }
 .primary-action { max-width: 580px; height: 60px; }
 .primary-action::part(native), .record-action::part(native) { justify-content: space-between; padding: 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
-.primary-action:hover, .record-action:hover { --background: var(--rose); }
-.flecha { display: inline-block; font-size: 25px; font-weight: 400; transition: transform 180ms ease; }
-.primary-action:hover .flecha, .record-action:hover .flecha { transform: translateX(7px); }
-.primary-action:active, .record-action:active { transform: translateY(1px); }
+.flecha { display: inline-block; font-size: 25px; font-weight: 400; transition: transform 160ms cubic-bezier(.22, 1, .36, 1); }
+.primary-action:active, .record-action:active { transform: scale(.985); }
 .records { margin-top: 58px; border-top: 1px solid var(--ink); }
-ion-card { margin: 0; padding: 0; border-radius: 0; box-shadow: none; border-bottom: 1px solid var(--ink); background: transparent; animation: record-in 380ms ease both; }
+ion-card { margin: 0; padding: 0; border-radius: 0; box-shadow: none; border-bottom: 1px solid var(--ink); background: transparent; animation: record-in 220ms cubic-bezier(.22, 1, .36, 1) both; }
 ion-card:nth-child(even) { background: var(--rose); }
 ion-card-header { position: relative; padding: 28px 20px 18px; }
 .record-number { margin-bottom: 22px; font-size: 10px; font-weight: 800; letter-spacing: .08em; }
@@ -32,3 +30,8 @@ ion-card-content { padding: 0 20px 28px; color: var(--ink); }
 @keyframes page-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes record-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 620px) { .page-intro { padding-top: 38px; } h2 { font-size: clamp(54px, 17vw, 88px); } .data-grid { grid-template-columns: 1fr; } .data-grid p, .data-grid p:not(:first-child) { padding: 13px 0; border-right: 0; border-bottom: 1px solid var(--ink); } .data-grid p:last-child { border-bottom: 0; } .acciones { grid-template-columns: 1fr; } .record-action:first-child::part(native) { border-right: 0; } }
+
+@media (hover: hover) and (pointer: fine) {
+  .primary-action:hover, .record-action:hover { --background: var(--rose); }
+  .primary-action:hover .flecha, .record-action:hover .flecha { transform: translateX(5px); }
+}

@@ -10,43 +10,199 @@
 <ion-content>
   <main class="catalog-page">
     <section class="page-intro">
-      <p class="eyebrow">PERFUMESTORE / 01</p>
-      <h2>CATÁLOGO<br />DE PERFUMES</h2>
-      <p class="descripcion">
-        Administración de perfumes persistentes en MySQL mediante la API PHP.
-      </p>
+      <div class="intro-grid">
+        <div>
+          <p class="eyebrow">PERFUMESTORE / ARCHIVO OLFATIVO</p>
+          <h2>CATÁLOGO<br />DE PERFUMES</h2>
+        </div>
+        <div class="intro-copy">
+          <p class="descripcion">
+            Administra tu catálogo y agrega una fotografía desde la cámara o la galería. Las imágenes se conservan de forma local en el dispositivo.
+          </p>
+          <p class="media-note"><span></span> MULTIMEDIA LOCAL / EXIF</p>
+        </div>
+      </div>
 
-      <ion-button expand="block" (click)="agregarPerfume()" class="primary-action">
-        <span>AGREGAR PERFUME</span>
-        <span class="flecha">→</span>
-      </ion-button>
+      <div class="main-actions">
+        <ion-button expand="block" (click)="agregarPerfume()" class="primary-action" [disabled]="cargando">
+          <span>AGREGAR PERFUME</span>
+          <span class="flecha">→</span>
+        </ion-button>
+        <ion-button expand="block" (click)="cargarPerfumes()" class="primary-action secondary-action" [disabled]="cargando">
+          <span>ACTUALIZAR LISTA</span>
+          <span class="flecha">↻</span>
+        </ion-button>
+      </div>
+
+      <div class="request-feedback loading" *ngIf="cargando" role="status" aria-live="polite">
+        <ion-spinner name="crescent"></ion-spinner>
+        <div>
+          <span class="feedback-label">ACTUALIZANDO</span>
+          <strong>{{ mensajeCarga }}</strong>
+        </div>
+      </div>
+
+      <div
+        class="request-feedback"
+        *ngIf="!cargando && mensajeEstado"
+        [class.success]="tipoMensaje === 'exito'"
+        [class.error]="tipoMensaje === 'error'"
+        role="status"
+        aria-live="polite"
+      >
+        <div>
+          <span class="feedback-label">ESTADO</span>
+          <strong>{{ mensajeEstado }}</strong>
+        </div>
+      </div>
     </section>
 
-    <section class="records">
-      <ion-card *ngFor="let perfume of perfumes">
-        <ion-card-header>
-          <div class="record-number">#{{ perfume.id }}</div>
-          <ion-card-title>{{ perfume.nombre }}</ion-card-title>
-          <ion-card-subtitle>{{ perfume.marca }}</ion-card-subtitle>
-        </ion-card-header>
+    <section class="records" aria-label="Catálogo de perfumes">
+      <ion-card *ngFor="let perfume of perfumes; let i = index" [style.--record-index]="i">
+        <div class="record-layout">
+          <section class="media-zone" [class.has-photo]="fotoDe(perfume)">
+            @if (fotoDe(perfume); as foto) {
+              <button
+                type="button"
+                class="photo-preview"
+                (click)="abrirFoto(perfume)"
+                [attr.aria-label]="'Ampliar fotografía de ' + perfume.nombre"
+              >
+                <img [src]="foto.src" [alt]="'Fotografía de ' + perfume.nombre" loading="lazy" />
+                <span class="photo-index">0{{ i + 1 }}</span>
+                <span class="photo-open">AMPLIAR <b>↗</b></span>
+              </button>
 
-        <ion-card-content>
-          <div class="data-grid">
-            <p><span>TIPO</span><strong>{{ perfume.tipo }}</strong></p>
-            <p><span>PRECIO</span><strong>${{ perfume.precio }}</strong></p>
-            <p><span>STOCK</span><strong>{{ perfume.stock }}</strong></p>
-          </div>
+              <div class="media-caption">
+                <span>{{ textoOrigen(foto.metadatos.origen) }}</span>
+                <span>{{ foto.metadatos.resolucion || 'Imagen local' }}</span>
+              </div>
+            } @else {
+              <button
+                type="button"
+                class="photo-placeholder"
+                (click)="gestionarFoto(perfume)"
+                [disabled]="procesandoFotoId === perfume.id"
+                [attr.aria-label]="'Agregar fotografía a ' + perfume.nombre"
+              >
+                @if (procesandoFotoId === perfume.id) {
+                  <ion-spinner name="crescent"></ion-spinner>
+                  <span>PROCESANDO IMAGEN</span>
+                } @else {
+                  <strong>＋</strong>
+                  <span>AGREGAR FOTOGRAFÍA</span>
+                  <small>CÁMARA O GALERÍA</small>
+                }
+              </button>
+            }
 
-          <div class="acciones">
-            <ion-button expand="block" (click)="editarPerfume(perfume)" class="record-action">
-              <span>EDITAR</span><span class="flecha">→</span>
-            </ion-button>
-            <ion-button expand="block" color="danger" (click)="eliminarPerfume(perfume)" class="record-action danger-action">
-              <span>ELIMINAR</span><span class="flecha">→</span>
-            </ion-button>
-          </div>
-        </ion-card-content>
+            <button
+              type="button"
+              class="media-manage"
+              (click)="gestionarFoto(perfume)"
+              [disabled]="procesandoFotoId === perfume.id"
+            >
+              @if (procesandoFotoId === perfume.id) {
+                <span>PROCESANDO...</span>
+              } @else {
+                <span>{{ fotoDe(perfume) ? 'CAMBIAR FOTO' : 'ELEGIR FOTO' }}</span>
+                <span>→</span>
+              }
+            </button>
+          </section>
+
+          <section class="record-info">
+            <ion-card-header>
+              <div class="record-number">PERFUME / {{ perfume.id.toString().padStart(2, '0') }}</div>
+              <ion-card-title>{{ perfume.nombre }}</ion-card-title>
+              <ion-card-subtitle>{{ perfume.marca }}</ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+              <div class="data-grid">
+                <p><span>TIPO</span><strong>{{ perfume.tipo }}</strong></p>
+                <p><span>PRECIO</span><strong>${{ perfume.precio }}</strong></p>
+                <p><span>STOCK</span><strong>{{ perfume.stock }}</strong></p>
+              </div>
+
+              @if (fotoDe(perfume); as foto) {
+                <div class="photo-facts">
+                  <p>
+                    <span>CAPTURA</span>
+                    <strong>{{ formatearFechaFoto(foto.metadatos.fecha) }}</strong>
+                  </p>
+                  <p>
+                    <span>DISPOSITIVO</span>
+                    <strong>{{ foto.metadatos.dispositivo || 'Metadatos no disponibles' }}</strong>
+                  </p>
+                </div>
+              }
+
+              <div class="acciones">
+                <ion-button expand="block" (click)="editarPerfume(perfume)" class="record-action" [disabled]="cargando">
+                  <span>EDITAR</span><span class="flecha">→</span>
+                </ion-button>
+                <ion-button
+                  expand="block"
+                  (click)="eliminarPerfume(perfume)"
+                  class="record-action danger-action"
+                  [disabled]="cargando"
+                >
+                  <span>ELIMINAR</span><span class="flecha">→</span>
+                </ion-button>
+              </div>
+            </ion-card-content>
+          </section>
+        </div>
       </ion-card>
+
+      <div class="empty-state" *ngIf="!cargando && perfumes.length === 0">
+        <span>CATÁLOGO VACÍO</span>
+        No hay perfumes para mostrar. Actualiza la lista para volver a consultar el servidor.
+      </div>
     </section>
   </main>
+
+  <ion-modal
+    [isOpen]="fotoAmpliada !== null"
+    (didDismiss)="cerrarFoto()"
+    cssClass="photo-viewer-modal"
+  >
+    <ng-template>
+      <ion-content class="viewer-content">
+        @if (fotoAmpliada && perfumeAmpliado) {
+          <main class="viewer-shell">
+            <header class="viewer-header">
+              <div>
+                <p class="viewer-eyebrow">ARCHIVO VISUAL / {{ perfumeAmpliado.marca }}</p>
+                <h3>{{ perfumeAmpliado.nombre }}</h3>
+              </div>
+              <button type="button" class="viewer-close" (click)="cerrarFoto()" aria-label="Cerrar fotografía">
+                CERRAR <span>×</span>
+              </button>
+            </header>
+
+            <section class="viewer-grid">
+              <figure class="viewer-figure">
+                <img [src]="fotoAmpliada.src" [alt]="'Fotografía ampliada de ' + perfumeAmpliado.nombre" />
+              </figure>
+
+              <aside class="viewer-meta">
+                <p class="viewer-number">PERFUME / {{ perfumeAmpliado.id.toString().padStart(2, '0') }}</p>
+                <div class="meta-list">
+                  <p><span>ORIGEN</span><strong>{{ textoOrigen(fotoAmpliada.metadatos.origen) }}</strong></p>
+                  <p><span>FECHA</span><strong>{{ formatearFechaFoto(fotoAmpliada.metadatos.fecha) }}</strong></p>
+                  <p><span>DISPOSITIVO</span><strong>{{ fotoAmpliada.metadatos.dispositivo || 'No disponible' }}</strong></p>
+                  <p><span>RESOLUCIÓN</span><strong>{{ fotoAmpliada.metadatos.resolucion || 'No disponible' }}</strong></p>
+                  <p><span>FORMATO</span><strong>{{ fotoAmpliada.metadatos.formato | uppercase }}</strong></p>
+                  <p><span>TAMAÑO</span><strong>{{ formatearTamano(fotoAmpliada.metadatos.tamanoBytes) }}</strong></p>
+                </div>
+                <small class="privacy-note">Los metadatos mostrados son básicos. La aplicación no presenta coordenadas GPS.</small>
+              </aside>
+            </section>
+          </main>
+        }
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

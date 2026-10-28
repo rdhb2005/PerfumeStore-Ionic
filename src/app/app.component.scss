@@ -19,7 +19,7 @@
   background: var(--ink);
   color: var(--bone);
   font-family: inherit;
-  animation: connection-in 220ms ease both;
+  animation: connection-in 180ms cubic-bezier(.22, 1, .36, 1) both;
 }
 
 .connectivity-banner.cache-mode {
@@ -56,15 +56,12 @@
   font-weight: 800;
   letter-spacing: .08em;
   cursor: pointer;
-  transition: transform 160ms ease, opacity 160ms ease;
+  transition: transform 140ms cubic-bezier(.22, 1, .36, 1), opacity 140ms cubic-bezier(.22, 1, .36, 1);
 }
 
-.connectivity-banner button:hover {
-  transform: translateX(4px);
-}
 
 .connectivity-banner button:active {
-  transform: translateX(2px) translateY(1px);
+  transform: translateX(2px) scale(.97);
   opacity: .7;
 }
 
@@ -84,4 +81,8 @@
   .connectivity-banner button {
     white-space: nowrap;
   }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .connectivity-banner button:hover { transform: translateX(3px); }
 }

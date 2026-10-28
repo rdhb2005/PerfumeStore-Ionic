@@ -1,17 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { ConexionService } from './conexion.service';
 import { EstadoConexionService } from './estado-conexion.service';
+import { RespuestaApi } from '../models/api.model';
+import { ApiEndpoint, MetodoHttp } from '../config/api-endpoints';
 /*
 Este archivo se encarga de comunicar la aplicación Ionic con la API PHP.
 Aquí se hacen las peticiones GET, POST, PATCH y DELETE.
 */
-interface RespuestaApi<T> {
-  success: boolean;
-  message: string;
-  data: T;
-  errors?: Record<string, string>;
-}
-
 type Parametros = Record<string, string | number | boolean>;
 
 export class ApiError extends Error {
@@ -35,29 +30,29 @@ export class ApiService {
   private readonly tiempoEsperaMs = 4500;
 
   // Este método consulta información de la API.
-  get<T>(archivo: string, params?: Parametros): Promise<T> {
+  get<T>(archivo: ApiEndpoint, params?: Parametros): Promise<T> {
     return this.enviar<T>('GET', archivo, undefined, params);
   }
 
   // Este método envía información nueva a la API.
-  post<T>(archivo: string, datos: unknown): Promise<T> {
+  post<T>(archivo: ApiEndpoint, datos: unknown): Promise<T> {
     return this.enviar<T>('POST', archivo, datos);
   }
 
   // Este método actualiza información existente.
-  patch<T>(archivo: string, datos: unknown, params?: Parametros): Promise<T> {
+  patch<T>(archivo: ApiEndpoint, datos: unknown, params?: Parametros): Promise<T> {
     return this.enviar<T>('PATCH', archivo, datos, params);
   }
 
   // Este método elimina información mediante la API.
-  delete<T = null>(archivo: string, params?: Parametros): Promise<T> {
+  delete<T = null>(archivo: ApiEndpoint, params?: Parametros): Promise<T> {
     return this.enviar<T>('DELETE', archivo, undefined, params);
   }
 
   // Este método arma la petición usando la IP guardada y revisa la respuesta del servidor.
   private async enviar<T>(
-    metodo: string,
-    archivo: string,
+    metodo: MetodoHttp,
+    archivo: ApiEndpoint,
     datos?: unknown,
     params?: Parametros,
   ): Promise<T> {

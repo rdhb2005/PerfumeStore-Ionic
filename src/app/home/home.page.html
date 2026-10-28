@@ -30,6 +30,33 @@
       </div>
     </section>
 
+    <section class="sync-panel" aria-label="Estado de sincronización local y remota">
+      <div class="sync-copy">
+        <p class="eyebrow">SINCRONIZACIÓN LOCAL / REMOTA</p>
+        <div class="sync-status-line">
+          <span class="sync-dot" [class.offline]="estadoSincronizacion.tipo === 'sin-conexion'" [class.busy]="sincronizando"></span>
+          <strong>{{ textoSincronizacion }}</strong>
+        </div>
+        <p class="sync-message">{{ estadoSincronizacion.mensaje }}</p>
+        <small>{{ ultimaSincronizacionTexto }}</small>
+      </div>
+
+      <ion-button
+        class="sync-action"
+        expand="block"
+        (click)="sincronizarAhora()"
+        [disabled]="sincronizando"
+      >
+        @if (sincronizando) {
+          <ion-spinner name="crescent"></ion-spinner>
+          <span>SINCRONIZANDO...</span>
+        } @else {
+          <span>SINCRONIZAR AHORA</span>
+          <span class="flecha">↻</span>
+        }
+      </ion-button>
+    </section>
+
     <section class="acciones" aria-label="Navegación principal">
       <ion-button expand="block" routerLink="/productos" class="menu-action">
         <span><small>01</small> PERFUMES</span>

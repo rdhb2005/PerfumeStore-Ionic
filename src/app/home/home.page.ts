@@ -7,10 +7,12 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonButton
+  IonButton,
+  IonSpinner
 } from '@ionic/angular';
 import { ConexionService } from '../services/conexion.service';
 import { EstadoConexionService, TipoEstadoConexion } from '../services/estado-conexion.service';
+import { EstadoSincronizacion, SincronizacionService } from '../services/sincronizacion.service';
 
 @Component({
   selector: 'app-home',
@@ -23,6 +25,7 @@ import { EstadoConexionService, TipoEstadoConexion } from '../services/estado-co
     IonTitle,
     IonContent,
     IonButton,
+    IonSpinner,
     RouterLink
   ],
 })
@@ -30,12 +33,18 @@ export class HomePage implements OnInit, OnDestroy {
   servidor = '';
   estadoTipo: TipoEstadoConexion = 'comprobando';
   estadoTexto = 'COMPROBANDO';
+  estadoSincronizacion: EstadoSincronizacion = {
+    tipo: 'pendiente',
+    mensaje: 'Esperando conexión para sincronizar.',
+    ultimaSincronizacion: null,
+  };
 
   private readonly suscripciones = new Subscription();
 
   constructor(
     private readonly conexionService: ConexionService,
     private readonly estadoConexionService: EstadoConexionService,
+    private readonly sincronizacionService: SincronizacionService,
     private readonly cdr: ChangeDetectorRef,
   ) {}
 
@@ -48,12 +57,59 @@ export class HomePage implements OnInit, OnDestroy {
       }),
     );
 
+    this.suscripciones.add(
+      this.sincronizacionService.estado$.subscribe((estado) => {
+        this.estadoSincronizacion = estado;
+        this.cdr.markForCheck();
+      }),
+    );
+
     this.servidor = await this.conexionService.obtenerServidor();
     this.cdr.markForCheck();
   }
 
   ngOnDestroy(): void {
     this.suscripciones.unsubscribe();
+  }
+
+  async sincronizarAhora(): Promise<void> {
+    await this.estadoConexionService.verificarAhora();
+    await this.sincronizacionService.sincronizar();
+  }
+
+  get sincronizando(): boolean {
+    return this.estadoSincronizacion.tipo === 'sincronizando';
+  }
+
+  get textoSincronizacion(): string {
+    switch (this.estadoSincronizacion.tipo) {
+      case 'sincronizando':
+        return 'SINCRONIZANDO';
+      case 'sincronizado':
+        return 'SINCRONIZADO';
+      case 'sin-conexion':
+        return 'MODO LOCAL';
+      case 'error':
+        return 'ERROR DE SINCRONIZACIÓN';
+      default:
+        return 'PENDIENTE';
+    }
+  }
+
+  get ultimaSincronizacionTexto(): string {
+    const valor = this.estadoSincronizacion.ultimaSincronizacion;
+    if (!valor) return 'Todavía no se ha completado una sincronización.';
+
+    const fecha = new Date(valor);
+    if (Number.isNaN(fecha.getTime())) return 'Fecha de sincronización no disponible.';
+
+    return `Última sincronización: ${fecha.toLocaleString('es-MX', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })}`;
   }
 
   private textoEstado(tipo: TipoEstadoConexion): string {
